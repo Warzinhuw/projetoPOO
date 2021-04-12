@@ -47,10 +47,10 @@ public class Curso {
     public String getProfCoordenador() {
         return this.profCoordenador;
     }
-
+    /*
     public void setProfCoordenador(String profCoordenador) {
         this.profCoordenador = profCoordenador;
-    }
+    } */
 
 
 }
