@@ -6,7 +6,7 @@ public class Disciplina {
     private String nome, nomeProfessor;
 
 
-    public Disciplina() {//
+    public Disciplina() {
     }
 
     public int getCodigoDisciplina() {
