@@ -14,6 +14,9 @@ public class Professor extends Usuario{
     private String area;
     private List<Disciplina> listDisciplinas = new LinkedList<Disciplina>();
 
+    public Professor(String area){
+        this.area = area;
+    }
 
     public String getArea() {
         return this.area;
@@ -42,9 +45,10 @@ public class Professor extends Usuario{
     }
 
     @Override
-    public void cadastrarUsuario() {
-        // TODO Auto-generated method stub
-        super.cadastrarUsuario();
+    public void cadastrarUsuario(String nome, String prontuario, String email, int categoriaConfiabilidade) {
+        // TODO vai salvar no banco
+        super.cadastrarUsuario(nome, prontuario, email, categoriaConfiabilidade);
+        this.setTipoUsuario(Usuario.TIPO_PROFESSOR);
     }
     
 }

@@ -2,8 +2,11 @@ package lib.Usuario;
 
 public abstract class Usuario {
 
-    private String nome, email;
-    private int prontuario, categoriaConfiabilidade;
+    public static final int TIPO_ALUNO = 0;
+    public static final int TIPO_PROFESSOR = 1;
+
+    private String nome, email, prontuario;
+    private int categoriaConfiabilidade, tipoUsuario;
 
 
     public Usuario() {
@@ -26,11 +29,11 @@ public abstract class Usuario {
         this.email = email;
     }
 
-    public int getProntuario() {
+    public String getProntuario() {
         return this.prontuario;
     }
 
-    public void setProntuario(int prontuario) {
+    public void setProntuario(String prontuario) {
         this.prontuario = prontuario;
     }
 
@@ -42,14 +45,28 @@ public abstract class Usuario {
         this.categoriaConfiabilidade = categoriaConfiabilidade;
     }
 
-    
-    public void cadastrarUsuario(){
-
+    public void cadastrarUsuario(String nome, String prontuario, String email, int categoriaConfiabilidade){
+        //mudar pra salvar no banco
+        this.nome = nome;
+        this.prontuario = prontuario;
+        this.email = email;
+        this.categoriaConfiabilidade = categoriaConfiabilidade;
     }
 
     public void excluirUsuario(){
-        
+        //excluir do banco
     }
+
+
+    public int getTipoUsuario() {
+        return this.tipoUsuario;
+    }
+
+
+    public void setTipoUsuario(int tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
+    }
+
 
     
 }
