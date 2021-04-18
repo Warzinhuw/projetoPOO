@@ -9,8 +9,7 @@ public class Aluno extends Usuario{
     private List<Curso> listCursos = new LinkedList<Curso>();
     
 
-    public Aluno(){
-    
+    public Aluno() {
     }    
 
     public List<Curso> getListCursos() {
@@ -22,9 +21,10 @@ public class Aluno extends Usuario{
     }
 
     @Override
-    public void cadastrarUsuario() {
-        // TODO Auto-generated method stub
-        super.cadastrarUsuario();
+    public void cadastrarUsuario(String nome, String prontuario, String email, int categoriaConfiabilidade) {
+        // TODO vai salvar no banco
+        super.cadastrarUsuario(nome, prontuario, email, categoriaConfiabilidade);
+        this.setTipoUsuario(Usuario.TIPO_ALUNO);
     }
 
 }
