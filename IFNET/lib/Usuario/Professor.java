@@ -1,11 +1,15 @@
-package IFNET.lib.Usuario;
+package lib.Usuario;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import IFNET.lib.Disciplina.Disciplina;
+import lib.Disciplina.Disciplina;
 
 public class Professor extends Usuario{
+
+    public Professor() {
+       
+        //TODO Auto-generated constructor stub
+    }
 
     private String area;
     private List<Disciplina> listDisciplinas = new LinkedList<Disciplina>();
@@ -27,11 +31,13 @@ public class Professor extends Usuario{
         this.listDisciplinas = listDisciplinas;
     }
 
-    public void addToDisciplinas(){ //
+    // Necessario o banco de dados
+    public void addToDisciplinas(int codigoDisciplina){
 
     }
 
-    public void removeFromDisciplinas(){ //
+    // Necessario o banco de dados
+    public void removeFromDisciplinas(){
 
     }
 

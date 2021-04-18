@@ -1,4 +1,4 @@
-package IFNET.lib.Usuario;
+package lib.Usuario;
 
 public abstract class Usuario {
 
@@ -7,6 +7,7 @@ public abstract class Usuario {
 
 
     public Usuario() {
+        
     }
 
     public String getNome() {
@@ -41,6 +42,7 @@ public abstract class Usuario {
         this.categoriaConfiabilidade = categoriaConfiabilidade;
     }
 
+    
     public void cadastrarUsuario(){
 
     }
