@@ -1,18 +1,23 @@
-package IFNET.lib.Grupo;
+package lib.Grupo;
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.net.ssl.ExtendedSSLSession;
 
 public class Grupo {
 
     private final int GRUPO_TRABALHO = 0;
     private final int GRUPO_PESQUISA = 1;
     
-    private int tipoGrupo;
+    private int tipoGrupo; 
     private List<String> disciplinasRelacionadas = new LinkedList<String>();
 
 
-    public Grupo() { //
+    private List<String> listIntegrante = new LinkedList<>();
+
+    public Grupo( int tipoGrupo, List<String> disciplinasRelacionadas) {
+        this.tipoGrupo = tipoGrupo;
+        this.disciplinasRelacionadas = disciplinasRelacionadas;
     }
 
 
@@ -32,27 +37,18 @@ public class Grupo {
         this.disciplinasRelacionadas = disciplinasRelacionadas;
     }
 
-    public void addIntegrante(){//
-
+    public void addIntegrante(String nome){
+        this.listIntegrante.add(nome);
     }
 
     public void removerIntegrante(String nome){
-        this.disciplinasRelacionadas.remove(nome);
+        this.listIntegrante.remove(nome);
     }
 
-    public void excluirGrupo(){//
 
+    // Precisa do banco de dados
+    public void excluirGrupo(){
+         
+        
     }
-
-    /*
-    public Grupo getGrupoMaisIntegrantes(){
-
-    }
-
-    public Grupo[] getGruposByDisciplinas(String disciplina){
-
-    }
-    */
-
-
 }

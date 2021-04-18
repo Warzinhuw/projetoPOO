@@ -1,11 +1,17 @@
-package IFNET.lib.Curso;
+package lib.Curso;
 
 public class Curso {
     
     private int codigoCurso, numeroSemestre, cargaHoraria;
     private String nome, nivel, profCoordenador;
 
-    public Curso() {//
+    public Curso(int codigoCurso, int numeroSemestre, int cargaHoraria, String nome, String nivel, String profCoordenador) {
+        this.codigoCurso = codigoCurso;
+        this.numeroSemestre = numeroSemestre;
+        this.cargaHoraria = cargaHoraria;
+        this.nome = nome;
+        this.nivel = nivel;
+        this.profCoordenador = profCoordenador;
     }
 
     public int getCodigoCurso() {
@@ -47,10 +53,9 @@ public class Curso {
     public String getProfCoordenador() {
         return this.profCoordenador;
     }
-    /*
+   
     public void setProfCoordenador(String profCoordenador) {
         this.profCoordenador = profCoordenador;
-    } */
-
-
+    } 
+    
 }

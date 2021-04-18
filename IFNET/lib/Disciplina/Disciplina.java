@@ -1,4 +1,4 @@
-package IFNET.lib.Disciplina;
+package lib.Disciplina;
 
 public class Disciplina {
     
@@ -6,7 +6,11 @@ public class Disciplina {
     private String nome, nomeProfessor;
 
 
-    public Disciplina() {
+    public Disciplina(int codigoDisciplina, int cargaHoraria, String nome, String nomeProfessor) {
+        this.codigoDisciplina = codigoDisciplina;
+        this.cargaHoraria = cargaHoraria;
+        this.nome = nome;
+        this.nomeProfessor = nomeProfessor;
     }
 
     public int getCodigoDisciplina() {
@@ -41,12 +45,14 @@ public class Disciplina {
         this.nomeProfessor = nomeProfessor;
     }
 
-    public void excluirDisciplina(int codigo){//
-
+    // Precisa do banco para exclusão
+    public void excluirDisciplina(int codigo){
+    
     }
 
-    public void addDisciplina(){//
-
+    // Precisa do banco para adicionar
+    public void addDisciplina(){
+        
     }
 
 }
