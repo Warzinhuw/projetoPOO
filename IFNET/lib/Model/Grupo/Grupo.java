@@ -1,4 +1,4 @@
-package lib.Grupo;
+package lib.Model.Grupo;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package lib.Usuario;
+package lib.Model.Usuario;
 
 import java.util.LinkedList;
 import java.util.List;
-import lib.Disciplina.Disciplina;
+import lib.Model.Disciplina.Disciplina;
 
 public class Professor extends Usuario{
 
@@ -35,12 +35,12 @@ public class Professor extends Usuario{
     }
 
     // Necessario o banco de dados
-    public void addToDisciplinas(int codigoDisciplina){
+    public void addToDisciplinas(int codigoDisciplina){//
 
     }
 
     // Necessario o banco de dados
-    public void removeFromDisciplinas(){
+    public void removeFromDisciplinas(){//
 
     }
 

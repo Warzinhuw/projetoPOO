@@ -1,4 +1,4 @@
-package lib.Usuario;
+package lib.Model.Usuario;
 
 public abstract class Usuario {
 

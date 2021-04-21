@@ -1,15 +1,15 @@
-package lib.Usuario;
+package lib.Model.Usuario;
 
 import java.util.LinkedList;
 import java.util.List;
-import lib.Curso.Curso;
+import lib.Model.Curso.Curso;
 
 public class Aluno extends Usuario{
 
     private List<Curso> listCursos = new LinkedList<Curso>();
     
 
-    public Aluno() {
+    public Aluno() {//
     }    
 
     public List<Curso> getListCursos() {

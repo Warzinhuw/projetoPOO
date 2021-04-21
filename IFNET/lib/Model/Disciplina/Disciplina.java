@@ -1,4 +1,4 @@
-package lib.Disciplina;
+package lib.Model.Disciplina;
 
 public class Disciplina {
     
@@ -46,12 +46,12 @@ public class Disciplina {
     }
 
     // Precisa do banco para exclusão
-    public void excluirDisciplina(int codigo){
+    public void excluirDisciplina(int codigo){//
     
     }
 
     // Precisa do banco para adicionar
-    public void addDisciplina(){
+    public void addDisciplina(){//
         
     }
 

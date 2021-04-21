@@ -1,4 +1,4 @@
-package lib.Curso;
+package lib.Model.Curso;
 
 public class Curso {
     
