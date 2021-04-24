@@ -21,9 +21,9 @@ public class Aluno extends Usuario{
     }
 
     @Override
-    public void cadastrarUsuario(String nome, String prontuario, String email, int categoriaConfiabilidade) {
+    public void cadastrarUsuario(String nome, String email, int categoriaConfiabilidade) {
         // TODO vai salvar no banco
-        super.cadastrarUsuario(nome, prontuario, email, categoriaConfiabilidade);
+        super.cadastrarUsuario(nome, email, categoriaConfiabilidade);
         this.setTipoUsuario(Usuario.TIPO_ALUNO);
     }
 

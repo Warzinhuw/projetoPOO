@@ -21,7 +21,7 @@ public class App {
                 System.out.println("Opção inválida!");
             System.out.print("Bem vindo(a) ao IFNET\n\nMenu - (a) Menu de cadastros  (b) Log in\nEntre com uma opção: ");
             opcaoMenu = leitura.nextLine();
-        }while(!(opcaoMenu.equalsIgnoreCase("a") || opcaoMenu.equalsIgnoreCase("b")));
+        }while(!(opcaoMenu.equalsIgnoreCase("a") || opcaoMenu.equalsIgnoreCase("b") || opcaoMenu.equalsIgnoreCase("c")));
 
         if(opcaoMenu.equalsIgnoreCase("a"))
             loadMenuCadastros();
@@ -39,8 +39,6 @@ public class App {
         if(opcaoMenu.equalsIgnoreCase("a") || opcaoMenu.equalsIgnoreCase("b")){
 
             String nome, email;
-            int min = 0000001, max = 9999999;
-            String prontuario = "BP"+Math.floor(Math.random()*(max-min+1)+min);
 
             System.out.print("Digite o nome do(a) "+(opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)")+": ");
             nome = leitura.nextLine();
@@ -49,14 +47,14 @@ public class App {
 
             if(opcaoMenu.equalsIgnoreCase("a")){
                 Aluno aluno = new Aluno();
-                aluno.cadastrarUsuario(nome, prontuario, email, 0);
+                aluno.cadastrarUsuario(nome, email, 0);
                 AlunoDAO.inserir(aluno);
                 System.out.println("Aluno(a) adicionado(a)!");
             }
             else{
                 System.out.print("Digite a área do professor (ex: Matemática): ");
                 Professor professor = new Professor(leitura.nextLine());
-                professor.cadastrarUsuario(nome, prontuario, email, 0);
+                professor.cadastrarUsuario(nome, email, 0);
                 ProfessorDAO.inserir(professor);
                 System.out.println("Professor(a) adicionado(a)!");
             }

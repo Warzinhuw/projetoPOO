@@ -13,16 +13,23 @@ public class AlunoDAO{
     public static void inserir(Aluno aluno) {			
 		try {
 			// cria um preparedStatement
-			String sql = "insert into aluno(prontuario, nome,email,categoria_confiabilidade, tipo_usuario) values (?,?,?,?,?)";
+			String sql = "insert into aluno(nome,email,categoria_confiabilidade, tipo_usuario) values (?,?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
-				stmt.setString(1, "BP3008347");
-                stmt.setString(2, aluno.getNome());
-			    stmt.setString(3, aluno.getEmail());
-			    stmt.setInt(4, aluno.getCategoriaConfiabilidade());
-                stmt.setInt(5, aluno.getTipoUsuario());
+                stmt.setString(1, aluno.getNome());
+			    stmt.setString(2, aluno.getEmail());
+			    stmt.setInt(3, aluno.getCategoriaConfiabilidade());
+                stmt.setInt(4, aluno.getTipoUsuario());
 			    stmt.execute();
+
+				sql = "select prontuario from aluno order by prontuario desc limit 1";
+				stmt = conexao.getConn().prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery();
+				rs.next();
+				aluno.setProntuario(rs.getString("prontuario"));
+				System.out.println("Prontuario: "+aluno.getProntuario());
+
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente
                 e.printStackTrace();
@@ -48,10 +55,10 @@ public class AlunoDAO{
 			if(resultado.next()){
 				aluno.cadastrarUsuario(
 					resultado.getString("nome"), 
-					resultado.getString("prontuario"), 
 					resultado.getString("email"), 
 					resultado.getInt("categoria_confiabilidade")
 					);
+				aluno.setProntuario(prontuario);
 				valido = true;
 			}
 			stmt.close();

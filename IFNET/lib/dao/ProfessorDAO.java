@@ -45,11 +45,11 @@ public class ProfessorDAO {
 			resultado = stmt.executeQuery();
 			if(resultado.next()){
 				professor.cadastrarUsuario(
-					resultado.getString("nome"), 
-					resultado.getString("prontuario"), 
+					resultado.getString("nome"),  
 					resultado.getString("email"), 
 					resultado.getInt("categoria_confiabilidade")
 					);
+					professor.setProntuario(prontuario);
 				valido = true;
 			}
 			stmt.close();

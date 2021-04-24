@@ -45,10 +45,8 @@ public abstract class Usuario {
         this.categoriaConfiabilidade = categoriaConfiabilidade;
     }
 
-    public void cadastrarUsuario(String nome, String prontuario, String email, int categoriaConfiabilidade){
-        //mudar pra salvar no banco
+    public void cadastrarUsuario(String nome, String email, int categoriaConfiabilidade){
         this.nome = nome;
-        this.prontuario = prontuario;
         this.email = email;
         this.categoriaConfiabilidade = categoriaConfiabilidade;
     }
