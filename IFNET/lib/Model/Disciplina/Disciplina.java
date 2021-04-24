@@ -6,8 +6,7 @@ public class Disciplina {
     private String nome, nomeProfessor;
 
 
-    public Disciplina(int codigoDisciplina, int cargaHoraria, String nome, String nomeProfessor) {
-        this.codigoDisciplina = codigoDisciplina;
+    public Disciplina(int cargaHoraria, String nome, String nomeProfessor) {
         this.cargaHoraria = cargaHoraria;
         this.nome = nome;
         this.nomeProfessor = nomeProfessor;

@@ -10,7 +10,7 @@ public class Conexao {
 	
 	public Conexao() {
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetopoo", "root", "root");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetopoo", "root", "admin");
 		} catch (SQLException e) {
 			// TODO Bloco catch gerado automaticamente
 			e.printStackTrace();

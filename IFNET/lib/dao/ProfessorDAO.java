@@ -1,16 +1,18 @@
 package lib.dao;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import lib.Model.Usuario.Professor;
 
 public class ProfessorDAO {
 
+	private static Conexao conexao = new Conexao();	
+
     public static void inserir(Professor professor) {		
-		Conexao conexao = new Conexao();	
 		try {
 			// cria um preparedStatement
-			String sql = "insert into professores(nome,email,categoria_confiabilidade, tipo_usuario, area) values (?,?,?,?,?)";
+			String sql = "insert into professor(nome,email,categoria_confiabilidade, tipo_usuario, area) values (?,?,?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
@@ -32,6 +34,29 @@ public class ProfessorDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean logarUsuario(String prontuario, Professor professor){
+		ResultSet resultado = null;
+		PreparedStatement stmt = null;
+		boolean valido = false;
+		try{
+			stmt = conexao.getConn().prepareStatement("select * from professor where prontuario like '"+prontuario+"'");
+			resultado = stmt.executeQuery();
+			if(resultado.next()){
+				professor.cadastrarUsuario(
+					resultado.getString("nome"), 
+					resultado.getString("prontuario"), 
+					resultado.getString("email"), 
+					resultado.getInt("categoria_confiabilidade")
+					);
+				valido = true;
+			}
+			stmt.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return valido;
 	}
     
 }
