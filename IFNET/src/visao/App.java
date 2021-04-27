@@ -95,7 +95,6 @@ public class App {
             loadMenuAluno(aluno);
         }
         else if(ProfessorDAO.logarUsuario(prontuario, professor)){
-            System.out.println("Bem vindo(a) "+professor.getNome()+"!");
             loadMenuProfessor(professor);
         }
         else
@@ -140,6 +139,26 @@ public class App {
     }
 
     public static void loadMenuProfessor(Professor professor){//
+        System.out.print("Bem vindo(a) "+professor.getNome()+"!\n\n"+
+        "(a) Inserir conteúdo, (b) Criar grupo de trabalho, (c) Criar grupo de pesquisa (0 para menu inicial)\nR: ");
+
+        switch(leitura.nextLine().toLowerCase()){
+
+            case "a":{
+                System.out.println("Suas disciplinas disponíveis: ");
+                ArrayList<String> listDisciplinas = new ArrayList<>();
+                listDisciplinas = DisciplinaDAO.getListDisciplinas(listDisciplinas, professor.getNome());
+                for(int i = 0 ; i < listDisciplinas.size() ; i++){
+                    System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
+                }
+                break;
+            }
+
+            case "0":{
+                loadMenuIncial();
+                break;
+            }
+        }
 
     }
 

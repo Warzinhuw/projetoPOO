@@ -42,10 +42,10 @@ public class DisciplinaDAO {
     }
 
     public static ArrayList<String> getListDisciplinas(ArrayList<String> listNomes){
+        PreparedStatement stmt = null;
+            ResultSet resultado = null;
         try{
             String sql = "select nome from disciplina";
-            PreparedStatement stmt = null;
-            ResultSet resultado = null;
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){
@@ -55,7 +55,23 @@ public class DisciplinaDAO {
             e.printStackTrace();
         }
         return listNomes;
-    }   
+    }
+
+    public static ArrayList<String> getListDisciplinas(ArrayList<String> listNomes, String nomeProfessor){
+        PreparedStatement stmt = null;
+        ResultSet resultado = null;
+        try{
+            String sql = "select nome from disciplina where professor = '"+nomeProfessor+"'";
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            while(resultado.next()){
+                listNomes.add(resultado.getString("nome"));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listNomes;
+    }
     
     public static boolean checarExistenciaDisciplina(String nome){
         boolean valido = false;

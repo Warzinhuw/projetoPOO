@@ -12,7 +12,7 @@ public class ProfessorDAO {
     public static void inserir(Professor professor) {		
 		try {
 			// cria um preparedStatement
-			String sql = "insert into professor(nome,email,categoria_confiabilidade, tipo_usuario, area) values (?,?,?,?,?)";
+			String sql = "insert into professor(nome,email,categoria_confiabilidade, tipo_usuario, area_estudo) values (?,?,?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
