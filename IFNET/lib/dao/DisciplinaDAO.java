@@ -72,6 +72,20 @@ public class DisciplinaDAO {
         }
         return listNomes;
     }
+       
+
+    public static void deletarDisciplina(String nomeDisciplina){
+		ResultSet resultado = null;
+		PreparedStatement stmt = null;
+
+		try{
+			stmt = conexao.getConn().prepareStatement("delete from disciplina where nome ='"+nomeDisciplina+"'");
+			stmt.execute();
+			stmt.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
     
     public static boolean checarExistenciaDisciplina(String nome){
         boolean valido = false;
