@@ -100,4 +100,16 @@ public class AlunoDAO{
 		return true;
 	}
     
+
+	public static void deletarAluno(String pront){
+		PreparedStatement stmt = null;
+		
+		try{
+			stmt = conexao.getConn().prepareStatement("delete from aluno where prontuario ='"+pront+"'");
+			stmt.execute();
+			stmt.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

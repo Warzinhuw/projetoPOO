@@ -58,5 +58,19 @@ public class ProfessorDAO {
 		}
 		return valido;
 	}
+
+		public static void deletarProfessor(String prontt){
+			
+			PreparedStatement stmt = null;
+			
+			try{
+				stmt = conexao.getConn().prepareStatement("delete from professor where prontuario ='"+prontt+"'");
+				stmt.execute();
+				stmt.close();
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+	}
     
+
 }

@@ -45,10 +45,4 @@ public class Grupo {
         this.listIntegrante.remove(nome);
     }
 
-
-    // Precisa do banco de dados
-    public void excluirGrupo(){
-         
-        
-    }
 }

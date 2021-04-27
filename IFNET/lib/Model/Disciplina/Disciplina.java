@@ -44,14 +44,5 @@ public class Disciplina {
         this.nomeProfessor = nomeProfessor;
     }
 
-    // Precisa do banco para exclusão
-    public void excluirDisciplina(int codigo){//
-    
-    }
-
-    // Precisa do banco para adicionar
-    public void addDisciplina(){//
-        
-    }
 
 }

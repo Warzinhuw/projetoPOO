@@ -34,16 +34,6 @@ public class Professor extends Usuario{
         this.listDisciplinas = listDisciplinas;
     }
 
-    // Necessario o banco de dados
-    public void addToDisciplinas(int codigoDisciplina){//
-
-    }
-
-    // Necessario o banco de dados
-    public void removeFromDisciplinas(){//
-
-    }
-
     @Override
     public void cadastrarUsuario(String nome, String email, int categoriaConfiabilidade) {
         // TODO vai salvar no banco
