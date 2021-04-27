@@ -1,4 +1,5 @@
 package visao;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import lib.Model.Disciplina.Disciplina;
@@ -14,6 +15,12 @@ import java.sql.DriverManager;
 public class App {
     private static Scanner leitura = new Scanner(System.in);
     public static void main(String[] args) throws Exception {
+        
+        loadMenuIncial();
+
+    }
+
+    public static void loadMenuIncial(){
         String opcaoMenu;
         int count = -1;
         do{
@@ -27,8 +34,6 @@ public class App {
             loadMenuCadastros();
         else if(opcaoMenu.equalsIgnoreCase("b"))
             loadMenuLogIn();
-
-
     }
 
     public static void loadMenuCadastros(){
@@ -87,7 +92,6 @@ public class App {
         System.out.print("Digite o prontuário: ");
         String prontuario = leitura.nextLine();
         if(AlunoDAO.logarUsuario(prontuario, aluno)){
-            System.out.println("Bem vindo(a) "+aluno.getNome()+"!");
             loadMenuAluno(aluno);
         }
         else if(ProfessorDAO.logarUsuario(prontuario, professor)){
@@ -100,7 +104,39 @@ public class App {
     }
 
     public static void loadMenuAluno(Aluno aluno){//
+        System.out.print("Bem vindo(a) "+aluno.getNome()+"!\n\n"+
+        "Cadastrar: "+"(a) disciplina, (b) livros, (c) apostilas (d) material da web (0 para menu inicial): ");
 
+        switch(leitura.nextLine().toLowerCase()){
+
+            case "a":{
+                System.out.println("Disciplinas disponíveis: ");
+                ArrayList<String> listDisciplinas = new ArrayList<>();
+                listDisciplinas = DisciplinaDAO.getListDisciplinas(listDisciplinas);
+                for(int i = 0 ; i < listDisciplinas.size() ; i++){
+                    System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
+                }
+                System.out.print("\nQual disciplina deseja cadastrar?\nR: ");
+                String disciplina = leitura.nextLine();
+                if(DisciplinaDAO.checarExistenciaDisciplina(disciplina)){
+                    if(AlunoDAO.adicionarDisciplina(aluno, disciplina))
+                        System.out.println("\nDisciplina adicionada com sucesso!");
+                    else
+                        System.out.println("\nDisciplina já cadastrada anteriormente!");
+                }
+                else{
+                    System.out.println("Disciplina não encontrada!");
+                }
+                loadMenuAluno(aluno);
+                break;
+            }
+
+            case "0":{
+                loadMenuIncial();
+                break;
+            }
+
+        }
     }
 
     public static void loadMenuProfessor(Professor professor){//

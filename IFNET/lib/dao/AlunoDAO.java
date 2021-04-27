@@ -67,5 +67,37 @@ public class AlunoDAO{
 		}
 		return valido;
 	}
+
+	public static boolean adicionarDisciplina(Aluno aluno, String nomeDisciplina){
+		try {
+			// cria um preparedStatement
+            PreparedStatement stmt = null;
+			ResultSet resultado = null;
+
+			if(DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina, aluno.getProntuario())){ //checa se já tem a disciplina add pra esse aluno
+				return false;
+			}
+
+			String sql = "insert into disciplinas_aluno(aluno_prontuario, nome) values (?,?)";
+            try{
+			    stmt = conexao.getConn().prepareStatement(sql);
+                stmt.setString(1, aluno.getProntuario());
+			    stmt.setString(2, nomeDisciplina);
+			    stmt.execute();
+            }catch (SQLException e) {
+                // TODO Bloco catch gerado automaticamente
+                e.printStackTrace();
+            }finally{
+                stmt.close();
+            }
+			// preenche os valores
+		
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
     
 }

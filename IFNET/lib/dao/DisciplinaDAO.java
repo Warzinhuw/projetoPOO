@@ -1,7 +1,11 @@
 package lib.dao;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.print.DocFlavor.STRING;
 
 import lib.Model.Disciplina.Disciplina;
 
@@ -36,5 +40,55 @@ public class DisciplinaDAO {
 		}
 
     }
+
+    public static ArrayList<String> getListDisciplinas(ArrayList<String> listNomes){
+        try{
+            String sql = "select nome from disciplina";
+            PreparedStatement stmt = null;
+            ResultSet resultado = null;
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            while(resultado.next()){
+                listNomes.add(resultado.getString("nome"));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listNomes;
+    }   
     
+    public static boolean checarExistenciaDisciplina(String nome){
+        boolean valido = false;
+        try{
+            String sql = "select nome from disciplina where nome = '"+nome+"'";
+            PreparedStatement stmt = null;
+            ResultSet resultado = null;
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            if(resultado.next())
+                valido = true;
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return valido;
+    }
+
+    public static boolean checarExistenciaDisciplina(String nome, String prontuario){
+        boolean valido = false;
+        try{
+            String sql = "select nome from disciplinas_aluno where aluno_prontuario = '"+prontuario+"' and nome = '"+nome+"'";
+            PreparedStatement stmt = null;
+            ResultSet resultado = null;
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            if(resultado.next())
+                valido = true;
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return valido;
+    }
+
 }
