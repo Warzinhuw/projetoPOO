@@ -3,8 +3,10 @@ package lib.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import lib.Model.Grupo.Grupo;
 import lib.Model.Usuario.Aluno;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AlunoDAO{
 
@@ -78,11 +80,12 @@ public class AlunoDAO{
 				return false;
 			}
 
-			String sql = "insert into disciplinas_aluno(aluno_prontuario, nome) values (?,?)";
+			String sql = "insert into disciplinas_aluno(aluno_prontuario, aluno_nome, nome) values (?,?,?)";
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
                 stmt.setString(1, aluno.getProntuario());
-			    stmt.setString(2, nomeDisciplina);
+			    stmt.setString(2, aluno.getNome());
+				stmt.setString(2, nomeDisciplina);
 			    stmt.execute();
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente
@@ -112,4 +115,5 @@ public class AlunoDAO{
 			e.printStackTrace();
 		}
 	}
+
 }

@@ -41,9 +41,10 @@ public class DisciplinaDAO {
 
     }
 
-    public static ArrayList<String> getListDisciplinas(ArrayList<String> listNomes){
+    public static ArrayList<String> getListDisciplinas(){
+        ArrayList<String> listNomes = new ArrayList<>();
         PreparedStatement stmt = null;
-            ResultSet resultado = null;
+        ResultSet resultado = null;
         try{
             String sql = "select nome from disciplina";
             stmt = conexao.getConn().prepareStatement(sql);
@@ -57,7 +58,8 @@ public class DisciplinaDAO {
         return listNomes;
     }
 
-    public static ArrayList<String> getListDisciplinas(ArrayList<String> listNomes, String nomeProfessor){
+    public static ArrayList<String> getListDisciplinas(String nomeProfessor){
+        ArrayList<String> listNomes = new ArrayList<>();
         PreparedStatement stmt = null;
         ResultSet resultado = null;
         try{

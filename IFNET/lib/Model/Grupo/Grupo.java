@@ -10,18 +10,30 @@ public class Grupo {
     public static final int GRUPO_PESQUISA = 1;
     
     private int tipoGrupo; 
-    private List<String> disciplinasRelacionadas = new LinkedList<String>();
-    private String nomeGrupo, nomeProfessor;
+    private String nomeGrupo, nomeProfessor, disciplinaRelacionada;
 
 
     private List<String> listIntegrante = new LinkedList<>();
 
-    public Grupo( int tipoGrupo, String nomeGrupo, String nomeProfessor) {
+    public Grupo(){//
+
+    };
+
+    public Grupo( int tipoGrupo, String nomeGrupo, String nomeProfessor, String disciplinaRelacionada) {
         this.nomeProfessor = nomeProfessor;
         this.nomeGrupo = nomeGrupo;
         this.tipoGrupo = tipoGrupo;
+        this.disciplinaRelacionada = disciplinaRelacionada;
     }
 
+
+    public String getDisciplinaRelacionada() {
+        return this.disciplinaRelacionada;
+    }
+
+    public void setDisciplinaRelacionada(String disciplinaRelacionada) {
+        this.disciplinaRelacionada = disciplinaRelacionada;
+    }
 
     public int getTipoGrupo() {
         return this.tipoGrupo;
@@ -29,14 +41,6 @@ public class Grupo {
 
     public void setTipoGrupo(int tipoGrupo) {
         this.tipoGrupo = tipoGrupo;
-    }
-
-    public List<String> getDisciplinasRelacionadas() {
-        return this.disciplinasRelacionadas;
-    }
-
-    public void setDisciplinasRelacionadas(List<String> disciplinasRelacionadas) {
-        this.disciplinasRelacionadas = disciplinasRelacionadas;
     }
 
     public void addIntegrante(String nome){

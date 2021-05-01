@@ -46,50 +46,55 @@ public class App {
     public static void loadMenuCadastros(){
         System.out.print("Cadastrar (a) aluno (b) professor (c) disciplina: ");
         String opcaoMenu = leitura.nextLine();
-    
 
-        if(opcaoMenu.equalsIgnoreCase("a") || opcaoMenu.equalsIgnoreCase("b")){
+        switch(opcaoMenu.toLowerCase()){
 
-            String nome, email;
+            case"a":
+            case"b":{
+                String nome, email;
+                System.out.print("Digite o nome do(a) "+(opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)")+": ");
+                nome = leitura.nextLine();
+                System.out.print("Digite o email do(a) "+(opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)")+": ");
+                email = leitura.nextLine();
 
-            System.out.print("Digite o nome do(a) "+(opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)")+": ");
-            nome = leitura.nextLine();
-            System.out.print("Digite o email do(a) "+(opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)")+": ");
-            email = leitura.nextLine();
-
-            if(opcaoMenu.equalsIgnoreCase("a")){
-                Aluno aluno = new Aluno();
-                aluno.cadastrarUsuario(nome, email, 0);
-                AlunoDAO.inserir(aluno);
-                System.out.println("Aluno(a) adicionado(a)!");
+                if(opcaoMenu.equalsIgnoreCase("a")){
+                    Aluno aluno = new Aluno();
+                    aluno.cadastrarUsuario(nome, email, 0);
+                    AlunoDAO.inserir(aluno);
+                    System.out.println("Aluno(a) adicionado(a)!");
+                }
+                else{
+                    System.out.print("Digite a área do professor (ex: Matemática): ");
+                    Professor professor = new Professor(leitura.nextLine());
+                    professor.cadastrarUsuario(nome, email, 0);
+                    ProfessorDAO.inserir(professor);
+                    System.out.println("Professor(a) adicionado(a)!");
+                }
+                break;
             }
-            else{
-                System.out.print("Digite a área do professor (ex: Matemática): ");
-                Professor professor = new Professor(leitura.nextLine());
-                professor.cadastrarUsuario(nome, email, 0);
-                ProfessorDAO.inserir(professor);
-                System.out.println("Professor(a) adicionado(a)!");
+
+            case"c":{
+                String nomeDisciplina, nomeProfessor;
+                int cargaHoraria;
+                System.out.print("Nome da disciplina: ");
+                nomeDisciplina = leitura.nextLine();
+                System.out.print("Carga horária: ");
+                cargaHoraria = Integer.parseInt(leitura.nextLine());
+                System.out.print("Nome do professor responsável: ");
+                nomeProfessor = leitura.nextLine();
+                Disciplina disciplina = new Disciplina(cargaHoraria, nomeDisciplina, nomeProfessor);
+                DisciplinaDAO.inserir(disciplina);
+                System.out.println("Disciplina adicionada!");
+                break;
             }
 
+            default:{
+                System.out.println("Opção inválida!");
+                loadMenuCadastros();
+                break;
+            }
         }
-        else if(opcaoMenu.equalsIgnoreCase("c")){
-            String nomeDisciplina, nomeProfessor;
-            int cargaHoraria;
-            System.out.print("Nome da disciplina: ");
-            nomeDisciplina = leitura.nextLine();
-            System.out.print("Carga horária: ");
-            cargaHoraria = Integer.parseInt(leitura.nextLine());
-            System.out.print("Nome do professor responsável: ");
-            nomeProfessor = leitura.nextLine();
-            Disciplina disciplina = new Disciplina(cargaHoraria, nomeDisciplina, nomeProfessor);
-            DisciplinaDAO.inserir(disciplina);
-            System.out.println("Disciplina adicionada!");
-        }
-        else{
-            System.out.println("Opção inválida!");
-            loadMenuCadastros();
-        }
-
+        
     }
 
     public static void loadMenuLogIn(){
@@ -119,8 +124,7 @@ public class App {
 
             case "a":{
                 System.out.println("Disciplinas disponíveis: ");
-                ArrayList<String> listDisciplinas = new ArrayList<>();
-                listDisciplinas = DisciplinaDAO.getListDisciplinas(listDisciplinas);
+                ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinas();
                 for(int i = 0 ; i < listDisciplinas.size() ; i++){
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
                 }
@@ -168,7 +172,7 @@ public class App {
         }
     }
 
-    public static void loadMenuProfessor(Professor professor){//
+    public static void loadMenuProfessor(Professor professor){
         System.out.print("Bem vindo(a) "+professor.getNome()+"!\n\n"+
         "(a) Inserir conteúdo, (b) Criar grupo de trabalho, (c) Criar grupo de pesquisa (d) Gerenciar grupos (0 para menu inicial)\nR: ");
 
@@ -177,12 +181,12 @@ public class App {
             case "a":{
                 System.out.println("Suas disciplinas disponíveis: ");
                 ArrayList<String> listDisciplinas = new ArrayList<>();
-                listDisciplinas = DisciplinaDAO.getListDisciplinas(listDisciplinas, professor.getNome());
+                listDisciplinas = DisciplinaDAO.getListDisciplinas(professor.getNome());
 
                 for(int i = 0 ; i < listDisciplinas.size() ; i++){
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
                 }
-                System.out.print("\nEm qual disciplica deseja adicionar o conteudo?\nR: ");
+                System.out.print("\nEm qual disciplina deseja adicionar o conteudo?\nR: ");
                 String disciplina = leitura.nextLine();
 
                 if(!listDisciplinas.contains(disciplina)){
@@ -200,16 +204,42 @@ public class App {
             case "b":{
                 System.out.print("Digite o nome do grupo de trabalho: ");
                 String nomeGrupo = leitura.nextLine();
-                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_TRABALHO, nomeGrupo, professor.getNome()));
+                String nomeDisciplina = escolherDisciplinaGrupo(professor);
+                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_TRABALHO, nomeGrupo, professor.getNome(), nomeDisciplina));
                 System.out.println("Grupo adicionado com sucesso!");
+                loadMenuProfessor(professor);
                 break;
             }
 
             case "c":{
                 System.out.print("Digite o nome do grupo de pesquisa: ");
                 String nomeGrupo = leitura.nextLine();
-                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_PESQUISA, nomeGrupo, professor.getNome()));
+                String nomeDisciplina = escolherDisciplinaGrupo(professor);
+                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_PESQUISA, nomeGrupo, professor.getNome(), nomeDisciplina));
                 System.out.println("Grupo adicionado com sucesso!");
+                loadMenuProfessor(professor);
+                break;
+            }
+
+            case "d":{
+                String nomeGrupo;
+                boolean controle = false;
+                do{
+                    System.out.print("Qual grupo deseja gerenciar? (digite 0 para ver os grupos disponíveis)\nR: ");
+                    nomeGrupo = leitura.nextLine();
+                    if(nomeGrupo.equals("0")){
+                        ArrayList<String> listGrupos = GrupoDAO.getListGrupos(professor.getNome());
+                        System.out.println("Grupos disponíveis: ");
+                        for(int i = 0 ; i < listGrupos.size() ; i++){
+                            System.out.print(listGrupos.get(i)+(i==listGrupos.size()-1 ? ".\n" : ", "));
+                        }
+                    }
+                    else if(GrupoDAO.checarExistenciaGrupo(nomeGrupo))
+                        controle = true;
+                    else
+                        System.out.println("Grupo inválido!");
+                }while(nomeGrupo.equals("0") || !controle);
+                loadMenuGrupo(nomeGrupo, professor.getNome());
                 break;
             }
 
@@ -220,6 +250,55 @@ public class App {
         }
 
     }
+
+    public static void loadMenuGrupo(String nomeGrupo, String nomeProfessor){
+        Grupo grupo = GrupoDAO.recuperarGrupo(nomeGrupo, nomeProfessor);
+        System.out.print("Menu grupo -\n(a) Adicionar alunos\n(b) Remover alunos\n(c) Excluir grupo\nR: ");
+
+        switch(leitura.nextLine().toLowerCase()){
+
+            case "a":{
+                String nomeAluno;
+                do{
+                    System.out.print("Digite o nome do aluno(digite 0 para ver os alunos disponíveis): ");
+                    nomeAluno = leitura.nextLine();
+                    if(nomeAluno.equals("0")){
+                        ArrayList<String> listAlunos = new ArrayList<>();
+                        listAlunos = GrupoDAO.getListAlunosSemGrupo(grupo);
+                        System.out.println("Alunos disponíveis: ");
+                        for(int i = 0 ; i < listAlunos.size() ; i++){
+                            System.out.print(listAlunos.get(i)+(i==listAlunos.size()-1 ? ".\n" : ", "));
+                        }
+                    }
+                }while(nomeAluno.equals("0"));
+            }
+
+        }
+
+    }
+
+    public static String escolherDisciplinaGrupo(Professor professor){
+        String nomeDisciplina;
+        boolean controle = false;
+        do{
+            System.out.print("A qual disciplina esse grupo será relacionado? (digite 0 para ver as disciplinas disponíveis)\nR: ");
+            nomeDisciplina = leitura.nextLine();
+            if(nomeDisciplina.equals("0")){
+                ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinas(professor.getNome());
+                System.out.println("Disciplinas disponíveis: ");
+                for(int i = 0 ; i < listDisciplinas.size() ; i++){
+                    System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? ".\n" : ", "));
+                }
+            }
+            else if(DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina))
+                controle = true;
+            else
+                System.out.println("Disciplina inválida!");
+        }while(nomeDisciplina.equals("0") || !controle);
+        return nomeDisciplina;
+    }
+
+
 
     
 
