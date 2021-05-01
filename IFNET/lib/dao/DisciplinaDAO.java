@@ -121,4 +121,31 @@ public class DisciplinaDAO {
         return valido;
     }
 
+    public static void inserirConteudo(String disciplina, String conteudo, String nomeProfessor){
+
+        try {
+			String sql = "insert into conteudos_disciplina(disciplina, conteudo, nome_professor) values (?,?,?)";
+            PreparedStatement stmt = null;
+            try{
+			    stmt = conexao.getConn().prepareStatement(sql);
+				stmt.setString(1, disciplina);
+                stmt.setString(2, conteudo);
+                stmt.setString(3, nomeProfessor);
+			    stmt.execute();
+            }catch (SQLException e) {
+                // TODO Bloco catch gerado automaticamente
+                e.printStackTrace();
+            }finally{
+                stmt.close();
+            }
+			// preenche os valores
+		
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    }
+
 }

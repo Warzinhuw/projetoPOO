@@ -3,12 +3,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import lib.Model.Disciplina.Disciplina;
+import lib.Model.Grupo.Grupo;
 import lib.Model.Material.Material;
 import lib.Model.Usuario.Aluno;
 import lib.Model.Usuario.Professor;
 import lib.Model.Usuario.Usuario;
 import lib.dao.AlunoDAO;
 import lib.dao.DisciplinaDAO;
+import lib.dao.GrupoDAO;
 import lib.dao.MaterialDAO;
 import lib.dao.ProfessorDAO;
 
@@ -168,7 +170,7 @@ public class App {
 
     public static void loadMenuProfessor(Professor professor){//
         System.out.print("Bem vindo(a) "+professor.getNome()+"!\n\n"+
-        "(a) Inserir conteúdo, (b) Criar grupo de trabalho, (c) Criar grupo de pesquisa (0 para menu inicial)\nR: ");
+        "(a) Inserir conteúdo, (b) Criar grupo de trabalho, (c) Criar grupo de pesquisa (d) Gerenciar grupos (0 para menu inicial)\nR: ");
 
         switch(leitura.nextLine().toLowerCase()){
 
@@ -176,9 +178,38 @@ public class App {
                 System.out.println("Suas disciplinas disponíveis: ");
                 ArrayList<String> listDisciplinas = new ArrayList<>();
                 listDisciplinas = DisciplinaDAO.getListDisciplinas(listDisciplinas, professor.getNome());
+
                 for(int i = 0 ; i < listDisciplinas.size() ; i++){
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
                 }
+                System.out.print("\nEm qual disciplica deseja adicionar o conteudo?\nR: ");
+                String disciplina = leitura.nextLine();
+
+                if(!listDisciplinas.contains(disciplina)){
+                    System.out.println("Disciplina invalida!");
+                    loadMenuProfessor(professor);
+                }
+
+                System.out.print("Insira o conteúdo: ");
+                DisciplinaDAO.inserirConteudo(disciplina, leitura.nextLine(), professor.getNome());
+                System.out.println("Conteúdo inserido com sucesso!");
+
+                break;
+            }
+
+            case "b":{
+                System.out.print("Digite o nome do grupo de trabalho: ");
+                String nomeGrupo = leitura.nextLine();
+                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_TRABALHO, nomeGrupo, professor.getNome()));
+                System.out.println("Grupo adicionado com sucesso!");
+                break;
+            }
+
+            case "c":{
+                System.out.print("Digite o nome do grupo de pesquisa: ");
+                String nomeGrupo = leitura.nextLine();
+                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_PESQUISA, nomeGrupo, professor.getNome()));
+                System.out.println("Grupo adicionado com sucesso!");
                 break;
             }
 

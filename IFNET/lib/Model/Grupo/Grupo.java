@@ -6,18 +6,20 @@ import javax.net.ssl.ExtendedSSLSession;
 
 public class Grupo {
 
-    private final int GRUPO_TRABALHO = 0;
-    private final int GRUPO_PESQUISA = 1;
+    public static final int GRUPO_TRABALHO = 0;
+    public static final int GRUPO_PESQUISA = 1;
     
     private int tipoGrupo; 
     private List<String> disciplinasRelacionadas = new LinkedList<String>();
+    private String nomeGrupo, nomeProfessor;
 
 
     private List<String> listIntegrante = new LinkedList<>();
 
-    public Grupo( int tipoGrupo, List<String> disciplinasRelacionadas) {
+    public Grupo( int tipoGrupo, String nomeGrupo, String nomeProfessor) {
+        this.nomeProfessor = nomeProfessor;
+        this.nomeGrupo = nomeGrupo;
         this.tipoGrupo = tipoGrupo;
-        this.disciplinasRelacionadas = disciplinasRelacionadas;
     }
 
 
@@ -44,5 +46,31 @@ public class Grupo {
     public void removerIntegrante(String nome){
         this.listIntegrante.remove(nome);
     }
+
+
+    public String getNomeGrupo() {
+        return this.nomeGrupo;
+    }
+
+    public void setNomeGrupo(String nomeGrupo) {
+        this.nomeGrupo = nomeGrupo;
+    }
+
+    public String getNomeProfessor() {
+        return this.nomeProfessor;
+    }
+
+    public void setNomeProfessor(String nomeProfessor) {
+        this.nomeProfessor = nomeProfessor;
+    }
+
+    public List<String> getListIntegrante() {
+        return this.listIntegrante;
+    }
+
+    public void setListIntegrante(List<String> listIntegrante) {
+        this.listIntegrante = listIntegrante;
+    }
+
 
 }
