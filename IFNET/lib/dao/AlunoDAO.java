@@ -30,7 +30,7 @@ public class AlunoDAO{
 				ResultSet rs = stmt.executeQuery();
 				rs.next();
 				aluno.setProntuario(rs.getString("prontuario"));
-				System.out.println("Prontuario: "+aluno.getProntuario());
+				
 
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente

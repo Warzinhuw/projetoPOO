@@ -1,5 +1,7 @@
 package visao;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import lib.Model.Disciplina.Disciplina;
@@ -28,25 +30,36 @@ public class App {
     public static void loadMenuIncial(){
         String opcaoMenu;
         System.out.println("\n-----Bem vindo(a) ao IFNET-----");
-        System.out.print("\nMenu - \n(a) Menu de cadastros  \n(b) Log in  \n(c) Exclusão ");
+        System.out.print("\nMenu - \n(a) Cadastro  \n(b) Log in  \n(c) Exclusão \n(d) Consultas");
         System.out.print("\nEntre com uma opção:");
         opcaoMenu = leitura.nextLine();
 
         switch(opcaoMenu.toLowerCase()){
             case "a":{
                 loadMenuCadastros();
+                break;
             }
 
             case "b":{
                 loadMenuLogIn();
+                break;
             }
 
             case "c":{
                 loadMenuExcluir();
+                break;
             }
 
-            default: System.out.println("Opção Invalida!");
-            loadMenuIncial();
+            case "d":{
+                loadMenuConsultas();
+                break;
+            }
+
+            default:{
+                System.out.println("Opção Invalida!");
+                loadMenuIncial();
+                break;
+            }
         }
     }
 
@@ -70,6 +83,7 @@ public class App {
                     aluno.cadastrarUsuario(nome, email, 0);
                     AlunoDAO.inserir(aluno);
                     System.out.println("Aluno(a) adicionado(a)!");
+                    System.out.println("Prontuario: "+aluno.getProntuario());
                     loadMenuAluno(aluno);
                 }
                 else{
@@ -209,7 +223,8 @@ public class App {
         System.out.print("Bem vindo(a) "+professor.getNome()+"!\n\n"+
         "\n(a) Inserir conteúdo \n(b) Criar grupo de trabalho \n(c) Criar grupo de pesquisa \n(d) Gerenciar grupos \n(0 para menu inicial)\n ");
         System.out.print("\nEntre com uma opção:");
-        switch(leitura.nextLine().toLowerCase()){
+        String opcaoMenu;
+        switch(opcaoMenu=leitura.nextLine().toLowerCase()){
 
             case "a":{
                 System.out.println("Suas disciplinas disponíveis: ");
@@ -234,22 +249,15 @@ public class App {
                 break;
             }
 
-            case "b":{
-                System.out.print("Digite o nome do grupo de trabalho: ");
-                String nomeGrupo = leitura.nextLine();
-                String nomeDisciplina = escolherDisciplinaGrupo(professor);
-                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_TRABALHO, nomeGrupo, professor.getNome(), nomeDisciplina));
-                System.out.println("Grupo adicionado com sucesso!");
-                loadMenuProfessor(professor);
-                break;
-            }
-
+            case "b":
             case "c":{
-                System.out.print("Digite o nome do grupo de pesquisa: ");
+                String tipoGrupo = opcaoMenu.equals("b") ? "trabalho" : "pesquisa";
+                System.out.print("Digite o nome do grupo de "+tipoGrupo+": ");
                 String nomeGrupo = leitura.nextLine();
                 String nomeDisciplina = escolherDisciplinaGrupo(professor);
-                GrupoDAO.inserir(new Grupo(Grupo.GRUPO_PESQUISA, nomeGrupo, professor.getNome(), nomeDisciplina));
-                System.out.println("Grupo adicionado com sucesso!");
+                Grupo grupo = new Grupo((tipoGrupo.equals("trabalho") ? Grupo.GRUPO_TRABALHO : Grupo.GRUPO_PESQUISA), nomeGrupo, professor.getNome(), nomeDisciplina);
+                GrupoDAO.inserir(grupo);
+                System.out.println("Grupo adicionado com sucesso!\nID do grupo: "+grupo.getIdGrupo());
                 loadMenuProfessor(professor);
                 break;
             }
@@ -368,6 +376,57 @@ public class App {
 
         }
 
+    }
+
+    public static void loadMenuConsultas(){
+        System.out.print("-- Menu -- \n(a) Usuários com mais relacionamentos \n(b) Grupos com mais usuários \n(c) Grupos de pesquisa por disciplina \n(0) voltar ao menu anterior \nR: ");
+
+        switch(leitura.nextLine().toLowerCase()){
+
+            case "a":{
+                break;
+            }
+
+            case "b":{
+                Map<String, Integer> mapGrupos = GrupoDAO.getMapGrupoMaisUsuarios();
+                if(mapGrupos.size()==0){
+                    System.out.println("Nenhum grupo encontrado.");
+                }
+                else{
+                    System.out.println((mapGrupos.size()==1 ? "O" : "Os ")+(mapGrupos.size()==1 ? " grupo com mais usuários:" : (mapGrupos.size()+" primeiros grupos com mais usuários: ")));
+                    for(Map.Entry<String, Integer> entry : mapGrupos.entrySet()){
+                        System.out.println(entry.getKey()+" - "+(entry.getValue() == 1 ? "1 aluno" : (entry.getValue()+" alunos")));
+                    }
+                }
+                loadMenuConsultas();
+                break;
+            }
+
+            case "c":{
+                System.out.print("Entre com a disciplina: ");
+                String disciplina = leitura.nextLine();
+                ArrayList<String> listDisciplinas = GrupoDAO.getListGruposPorDisciplina(disciplina);
+                if(listDisciplinas.isEmpty())
+                    System.out.println("Nenhum grupo encontrado relacionado a essa disciplina.");
+                else{
+                    System.out.println("Grupos relacionados a essa disciplina: ");
+                    for(int i = 0 ; i<listDisciplinas.size() ; i ++){
+                        System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? ".\n" : ", "));
+                    }
+                }
+                break;
+            }
+
+            case "0":
+                loadMenuIncial();
+                break;
+
+            default:{
+                System.out.println("Opção inválida!");
+                loadMenuConsultas();
+            }
+
+        }
     }
 
     public static String escolherDisciplinaGrupo(Professor professor){

@@ -9,7 +9,7 @@ public class Grupo {
     public static final int GRUPO_TRABALHO = 0;
     public static final int GRUPO_PESQUISA = 1;
     
-    private int tipoGrupo; 
+    private int tipoGrupo, idGrupo; 
     private String nomeGrupo, nomeProfessor, disciplinaRelacionada;
 
 
@@ -26,6 +26,15 @@ public class Grupo {
         this.disciplinaRelacionada = disciplinaRelacionada;
     }
 
+    
+
+    public int getIdGrupo() {
+        return this.idGrupo;
+    }
+
+    public void setIdGrupo(int idGrupo) {
+        this.idGrupo = idGrupo;
+    }
 
     public String getDisciplinaRelacionada() {
         return this.disciplinaRelacionada;

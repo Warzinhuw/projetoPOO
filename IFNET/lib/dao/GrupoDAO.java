@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import lib.Model.Grupo.Grupo;
 
@@ -24,6 +26,12 @@ public class GrupoDAO {
 			    stmt.setString(3, grupo.getNomeProfessor());
                 stmt.setString(4, grupo.getDisciplinaRelacionada());
 			    stmt.execute();
+
+                sql = "select id_grupo from grupo order by id_grupo desc limit 1";
+				stmt = conexao.getConn().prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery();
+				rs.next();
+				grupo.setIdGrupo(rs.getInt("id_grupo"));
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente
                 e.printStackTrace();
@@ -86,6 +94,7 @@ public class GrupoDAO {
                 grupo.setNomeProfessor(nomeProfessor);
                 grupo.setTipoGrupo(resultado.getInt("tipo_grupo"));
                 grupo.setDisciplinaRelacionada(resultado.getString("nome_disciplina"));
+                grupo.setIdGrupo(resultado.getInt("id_grupo"));
                 return grupo;
 			}
 			stmt.close();
@@ -108,7 +117,7 @@ public class GrupoDAO {
             while(resultado.next()){
                 listNomeAlunos.add(resultado.getString("aluno_nome"));
             }
-			sql = "select nome_aluno from grupo_list_alunos where nome_grupo = '"+grupo.getNomeGrupo()+"' and nome_professor = '"+grupo.getNomeProfessor()+"'";
+			sql = "select nome_aluno from grupo_list_alunos where id_grupo = '"+grupo.getIdGrupo()+"'";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){
@@ -142,16 +151,33 @@ public class GrupoDAO {
         return listNomeAlunos;
     }
 
+    public static ArrayList<String> getListGruposPorDisciplina(String disciplina){
+        ArrayList<String> listDisciplinas = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet resultado = null;
+        try{
+            String sql = "select nome_grupo from Grupo where nome_disciplina = '"+disciplina+"'";
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            while(resultado.next()){
+                listDisciplinas.add(resultado.getString("nome_grupo"));
+            }
+            stmt.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listDisciplinas;
+    }
+
     public static void inserirAluno(Grupo grupo, String nomeAluno){
         try {
 			// cria um preparedStatement
-			String sql = "insert into Grupo_list_alunos(nome_aluno, nome_grupo, nome_professor) values (?,?,?)";
+			String sql = "insert into Grupo_list_alunos(id_grupo, nome_aluno) values (?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
-                stmt.setString(1, nomeAluno);
-			    stmt.setString(2, grupo.getNomeGrupo());
-			    stmt.setString(3, grupo.getNomeProfessor());
+                stmt.setInt(1, grupo.getIdGrupo());
+                stmt.setString(2, nomeAluno);
 			    stmt.execute();
             }catch (SQLException e) {
                 e.printStackTrace();
@@ -190,5 +216,28 @@ public class GrupoDAO {
 			e.printStackTrace();
 		}
     }
-    
+
+    public static Map<String, Integer> getMapGrupoMaisUsuarios(){
+        Map<String, Integer> mapGrupos = new HashMap<>();
+        PreparedStatement stmt = null;
+        ResultSet resultado = null;
+        try{
+            String sql = 
+            "select Grupo.nome_grupo, count(Grupo_list_alunos.id_grupo) from Grupo_list_alunos "+
+            "INNER JOIN Grupo "+
+            "ON Grupo_list_alunos.id_grupo = Grupo.id_grupo "+
+            "group by Grupo_list_alunos.id_grupo "+
+            "order by count(Grupo_list_alunos.id_grupo) desc "+
+            "limit 3";
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            while(resultado.next()){
+                mapGrupos.put(resultado.getString("Grupo.nome_grupo"), resultado.getInt("count(Grupo_list_alunos.id_grupo)"));
+            }
+            stmt.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapGrupos;
+    }
 }
