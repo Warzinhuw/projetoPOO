@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.print.DocFlavor.STRING;
 
 import lib.Model.Disciplina.Disciplina;
+import lib.Model.Usuario.Professor;
 
 public class DisciplinaDAO {
 
@@ -63,6 +64,23 @@ public class DisciplinaDAO {
         ResultSet resultado = null;
         try{
             String sql = "select nome from disciplina where professor = '"+nomeProfessor+"'";
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            while(resultado.next()){
+                listNomes.add(resultado.getString("nome"));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listNomes;
+    }
+
+    public static ArrayList<String> getListDisciplinasSemProf(){
+        ArrayList<String> listNomes = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet resultado = null;
+        try{
+            String sql = "select nome from disciplina where ISNULL(professor) ";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){
@@ -149,4 +167,40 @@ public class DisciplinaDAO {
 
     }
 
+
+    public static boolean adicionarDisciplinaProfessor(Professor professor, String nomeDisciplina){
+        try {
+            // cria um preparedStatement
+            PreparedStatement stmt = null;
+            if(DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina, professor.getProntuario())){ //checa se já tem a disciplina add pra esse aluno
+                return false;
+            }
+
+            String sql = "update disciplina SET Professor = '"+ professor.getNome() +"' , Professor_prontuario = '"+professor.getProntuario()+"'where nome ='"+nomeDisciplina+"' ";
+            try{
+                stmt = conexao.getConn().prepareStatement(sql);
+                stmt.execute();
+
+                
+                sql = "select prontuario from professor order by prontuario desc limit 1";
+				stmt = conexao.getConn().prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery();
+				rs.next();
+				professor.setProntuario(rs.getString("prontuario"));
+				
+            }catch (SQLException e) {
+                // TODO Bloco catch gerado automaticamente
+                e.printStackTrace();
+            }finally{
+                stmt.close();
+            }
+            // preenche os valores
+        
+            
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return true;
+    }
 }

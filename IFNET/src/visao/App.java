@@ -24,7 +24,6 @@ public class App {
     public static void main(String[] args) throws Exception {
         
         loadMenuIncial();
-
     }
 
     public static void loadMenuIncial(){
@@ -79,7 +78,11 @@ public class App {
                 email = leitura.nextLine();
 
                 if(opcaoMenu.equalsIgnoreCase("a")){
+
                     Aluno aluno = new Aluno();
+                    System.out.print("\nDigite o nome do Curso: ");
+                    String nomeC = leitura.nextLine();
+                    aluno.setNomeCurso(nomeC);
                     aluno.cadastrarUsuario(nome, email, 0);
                     AlunoDAO.inserir(aluno);
                     System.out.println("Aluno(a) adicionado(a)!");
@@ -87,12 +90,34 @@ public class App {
                     loadMenuAluno(aluno);
                 }
                 else{
-                    System.out.print("Digite a área do professor (ex: Matemática): ");
-                    Professor professor = new Professor(leitura.nextLine());
-                    professor.cadastrarUsuario(nome, email, 0);
+                System.out.print("\nDigite a area de estudo do professor: ");
+                String area = leitura.nextLine();
+                System.out.println("\nDisciplinas disponíveis: ");
+                ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
+                for(int i = 0 ; i < listDisciplinas.size() ; i++){
+                    System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
+                }
+                System.out.print("\nQual disciplina esse professor irá ministrar?\nR: ");
+                String disciplina = leitura.nextLine();
+                Professor professor; 
+                professor = new Professor();
+                professor.setArea(area);
+                professor.setDisciplina(disciplina);
+                professor.cadastrarUsuario(nome, email, 0);
+                if(DisciplinaDAO.checarExistenciaDisciplina(disciplina)){
                     ProfessorDAO.inserir(professor);
+                    if(DisciplinaDAO.adicionarDisciplinaProfessor(professor, disciplina)){
                     System.out.println("Professor(a) adicionado(a)!");
+                    System.out.println("Prontuario: "+professor.getProntuario());
                     loadMenuProfessor(professor);
+                    }
+                    else
+                        System.out.println("\nDisciplina já cadastrada anteriormente!");
+                }
+                else{
+                    System.out.println("Disciplina não encontrada!");
+                }
+                   
                 }
                 break;
             }

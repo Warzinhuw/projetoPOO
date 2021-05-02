@@ -6,19 +6,18 @@ import lib.Model.Curso.Curso;
 
 public class Aluno extends Usuario{
 
-    private List<Curso> listCursos = new LinkedList<Curso>();
-    
+    String nomeCurso;
 
+    public String getNomeCurso() {
+        return this.nomeCurso;
+    }
+
+    public void setNomeCurso(String nomeCurso) {
+        this.nomeCurso = nomeCurso;
+    }
+    
     public Aluno() {//
     }    
-
-    public List<Curso> getListCursos() {
-        return this.listCursos;
-    }
-
-    public void setListCursos(List<Curso> listCursos) {
-        this.listCursos = listCursos;
-    }
 
     @Override
     public void cadastrarUsuario(String nome, String email, int categoriaConfiabilidade) {
