@@ -27,30 +27,38 @@ public class App {
 
     public static void loadMenuIncial(){
         String opcaoMenu;
-        int count = -1;
-        do{
-            if(++count != 0)
-                System.out.println("Opção inválida!");
-            System.out.print("Bem vindo(a) ao IFNET\n\nMenu - (a) Menu de cadastros  (b) Log in  (c) Exclusão\nEntre com uma opção: ");
-            opcaoMenu = leitura.nextLine();
-        }while(!(opcaoMenu.equalsIgnoreCase("a") || opcaoMenu.equalsIgnoreCase("b") || opcaoMenu.equalsIgnoreCase("c")));
+        System.out.println("\n-----Bem vindo(a) ao IFNET-----");
+        System.out.print("\nMenu - \n(a) Menu de cadastros  \n(b) Log in  \n(c) Exclusão ");
+        System.out.print("\nEntre com uma opção:");
+        opcaoMenu = leitura.nextLine();
 
-        if(opcaoMenu.equalsIgnoreCase("a"))
-            loadMenuCadastros();
-        else if(opcaoMenu.equalsIgnoreCase("b"))
-            loadMenuLogIn();
-        else if(opcaoMenu.equalsIgnoreCase("c"))
-            excluir();
+        switch(opcaoMenu.toLowerCase()){
+            case "a":{
+                loadMenuCadastros();
+            }
+
+            case "b":{
+                loadMenuLogIn();
+            }
+
+            case "c":{
+                loadMenuExcluir();
+            }
+
+            default: System.out.println("Opção Invalida!");
+            loadMenuIncial();
+        }
     }
 
     public static void loadMenuCadastros(){
-        System.out.print("Cadastrar (a) aluno (b) professor (c) disciplina: ");
+        System.out.print("\n\nCadastrar: \n(a) aluno \n(b) professor \n(c) disciplina \n(0 para voltar ao menu inicial)");
+        System.out.print("\nEntre com uma opção:");
         String opcaoMenu = leitura.nextLine();
 
         switch(opcaoMenu.toLowerCase()){
 
-            case"a":
-            case"b":{
+            case "a":
+            case "b":{
                 String nome, email;
                 System.out.print("Digite o nome do(a) "+(opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)")+": ");
                 nome = leitura.nextLine();
@@ -62,6 +70,7 @@ public class App {
                     aluno.cadastrarUsuario(nome, email, 0);
                     AlunoDAO.inserir(aluno);
                     System.out.println("Aluno(a) adicionado(a)!");
+                    loadMenuAluno(aluno);
                 }
                 else{
                     System.out.print("Digite a área do professor (ex: Matemática): ");
@@ -69,33 +78,37 @@ public class App {
                     professor.cadastrarUsuario(nome, email, 0);
                     ProfessorDAO.inserir(professor);
                     System.out.println("Professor(a) adicionado(a)!");
+                    loadMenuProfessor(professor);
                 }
                 break;
             }
 
             case"c":{
-                String nomeDisciplina, nomeProfessor;
+                String nomeDisciplina;
                 int cargaHoraria;
                 System.out.print("Nome da disciplina: ");
                 nomeDisciplina = leitura.nextLine();
                 System.out.print("Carga horária: ");
                 cargaHoraria = Integer.parseInt(leitura.nextLine());
-                System.out.print("Nome do professor responsável: ");
-                nomeProfessor = leitura.nextLine();
-                Disciplina disciplina = new Disciplina(cargaHoraria, nomeDisciplina, nomeProfessor);
+                Disciplina disciplina = new Disciplina(cargaHoraria, nomeDisciplina);
                 DisciplinaDAO.inserir(disciplina);
                 System.out.println("Disciplina adicionada!");
+                loadMenuCadastros();
                 break;
             }
 
+            case "0":{
+                loadMenuIncial();
+            }
             default:{
                 System.out.println("Opção inválida!");
                 loadMenuCadastros();
                 break;
             }
         }
-        
     }
+        
+    
 
     public static void loadMenuLogIn(){
 
@@ -109,17 +122,18 @@ public class App {
         else if(ProfessorDAO.logarUsuario(prontuario, professor)){
             loadMenuProfessor(professor);
         }
-        else
+        else{
             System.out.println("Usuário não encontrado!");
+            loadMenuLogIn();
+        }
 
     }
 
-    public static void loadMenuAluno(Aluno aluno){//
+    public static void loadMenuAluno(Aluno aluno){
         Material material = new Material();
 
-        System.out.print("Bem vindo(a) "+aluno.getNome()+"!\n\n"+
-        "Cadastrar: "+"(a) disciplina, (b) livros, (c) apostilas (d) material da web (0 para menu inicial): ");
-
+        System.out.print("\nBem vindo(a) "+aluno.getNome()+"!\n\n"+ "Cadastrar: "+"\n(a) disciplina \n(b) livros \n(c) apostilas \n(d) material da web \n(0 para sair) ");
+        System.out.print("\nEntre com uma opção:");
         switch(leitura.nextLine().toLowerCase()){
 
             case "a":{
@@ -150,22 +164,41 @@ public class App {
                 String area_conhecimento  = leitura.nextLine();
                 material.cadastrarMaterial(nome_material, area_conhecimento, "Livro");
                 MaterialDAO.inserir(material);
-                    
+                System.out.println("Material adicionado com sucesso!");
+                loadMenuAluno(aluno);
                 break;
             }
 
             case "c":{
-                
+                System.out.print("Digite o nome do material que deseja adicionar: ");
+                String nome_material  = leitura.nextLine();
+                System.out.print("Digite a area de conhecimento: ");
+                String area_conhecimento  = leitura.nextLine();
+                material.cadastrarMaterial(nome_material, area_conhecimento, "Apostila");
+                MaterialDAO.inserir(material);
+                System.out.println("Material adicionado com sucesso!");
+                loadMenuAluno(aluno);
             }
 
             case "d":{
-                
+                System.out.print("Digite o nome do material que deseja adicionar: ");
+                String nome_material  = leitura.nextLine();
+                System.out.print("Digite a area de conhecimento: ");
+                String area_conhecimento  = leitura.nextLine();
+                material.cadastrarMaterial(nome_material, area_conhecimento, "Material da WEB");
+                MaterialDAO.inserir(material);
+                System.out.println("Material adicionado com sucesso!");
+                loadMenuAluno(aluno);
             }
-
-           
 
             case "0":{
                 loadMenuIncial();
+                break;
+            }
+
+            default:{
+                System.out.println("Opção inválida!");
+                loadMenuAluno(aluno);
                 break;
             }
 
@@ -174,8 +207,8 @@ public class App {
 
     public static void loadMenuProfessor(Professor professor){
         System.out.print("Bem vindo(a) "+professor.getNome()+"!\n\n"+
-        "(a) Inserir conteúdo, (b) Criar grupo de trabalho, (c) Criar grupo de pesquisa (d) Gerenciar grupos (0 para menu inicial)\nR: ");
-
+        "\n(a) Inserir conteúdo \n(b) Criar grupo de trabalho \n(c) Criar grupo de pesquisa \n(d) Gerenciar grupos \n(0 para menu inicial)\n ");
+        System.out.print("\nEntre com uma opção:");
         switch(leitura.nextLine().toLowerCase()){
 
             case "a":{
@@ -197,7 +230,7 @@ public class App {
                 System.out.print("Insira o conteúdo: ");
                 DisciplinaDAO.inserirConteudo(disciplina, leitura.nextLine(), professor.getNome());
                 System.out.println("Conteúdo inserido com sucesso!");
-
+                loadMenuProfessor(professor);
                 break;
             }
 
@@ -358,43 +391,63 @@ public class App {
         return nomeDisciplina;
     }
 
-
-
-    
-
-    public static void excluir(){
+    public static void loadMenuExcluir(){
 
         Aluno aluno = new Aluno();
         Professor professor = new Professor();
 
-        System.out.print("Deseja excluir: Aluno (a) , Professor (b), Disciplina (c) , Material/Conteudo (d) , Grupo (e):  ");
+        System.out.print("\n\nDeseja excluir: \n(a) Aluno \n(b) Professor \n(c) Disciplina \n(d) Material \n(0 para voltar ao menu anterior)");
+        System.out.print("\nEscolha uma opção: ");
         String opcaoExclusao = leitura.nextLine();
         switch (opcaoExclusao){
-            case "a":
-
+            case "a":{
                 System.out.print("Digite o prontuario do aluno que deseja excluir: ");
                 String pront = leitura.nextLine();
-                    AlunoDAO.deletarAluno(pront);
-                    break;
+                AlunoDAO.deletarAluno(pront);
+                System.out.print("Aluno removido com sucesso!");
+                loadMenuExcluir();
+                break;
+            }
             
-            case "b":
-                
+            case "b":{
                 System.out.print("Digite o prontuario do professor que deseja excluir: ");
                 String prontt = leitura.nextLine();
                 ProfessorDAO.deletarProfessor(prontt);
-                break;
-                
-
-            case "c":
-            System.out.print("Digite o nome da disciplina que deseja excluir: ");
-            String nomeDisciplina = leitura.nextLine();
-                DisciplinaDAO.deletarDisciplina(nomeDisciplina);
+                System.out.print("Professor removido com sucesso!");
+                loadMenuExcluir();
                 break;
             }
+                
+
+            case "c":{
+                System.out.print("Digite o nome da disciplina que deseja excluir: ");
+                String nomeDisciplina = leitura.nextLine();
+                DisciplinaDAO.deletarDisciplina(nomeDisciplina);
+                System.out.print("Disciplina removida com sucesso!");
+                loadMenuExcluir();
+                break;
+            }
+
+            case "d":{
+                System.out.print("Digite o nome do material que deseja excluir: ");
+                String nomeMaterial = leitura.nextLine();
+                MaterialDAO.deletarMaterial(nomeMaterial);
+                System.out.print("Material removido com sucesso!");
+                loadMenuExcluir();
+                break;
+            }
+
+            case "0":{
+                loadMenuIncial();
+            }
+
+            default: {
+                System.out.println("Opção Invalida!");
+                loadMenuExcluir();
+            }
         }
-
-
     }
+}
                 
 
 

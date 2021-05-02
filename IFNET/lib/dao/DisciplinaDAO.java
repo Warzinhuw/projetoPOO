@@ -17,13 +17,12 @@ public class DisciplinaDAO {
 
         try {
 			// cria um preparedStatement
-			String sql = "insert into disciplina(nome, carga_horaria, professor) values (?,?,?)";
+			String sql = "insert into disciplina(nome, carga_horaria) values (?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
 				stmt.setString(1, disciplina.getNome());
                 stmt.setInt(2, disciplina.getCargaHoraria());
-			    stmt.setString(3, disciplina.getNomeProfessor());
 			    stmt.execute();
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente
