@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Professor` (
   `categoria_confiabilidade` INT NULL,
   `relacionamento` VARCHAR(100) NULL,
   `area_estudo` VARCHAR(45) NULL,
+  `disciplina` VARCHAR(45) NULL,
   `tipo_usuario` VARCHAR(45) NULL,
   PRIMARY KEY (`prontuario`))
 ENGINE = InnoDB;
@@ -34,22 +35,26 @@ ALTER TABLE Professor AUTO_INCREMENT = 500;
 -- Table `projetopoo`.`Grupo`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projetopoo`.`Grupo` (
+  `id_grupo` INT auto_increment,
   `nome_grupo` VARCHAR(45) NOT NULL,
   `tipo_grupo` VARCHAR(45) NULL,
   `nome_professor` VARCHAR(45) NOT NULL,
   `nome_disciplina` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`nome_professor`)
+  PRIMARY KEY (`id_grupo`)
   )
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `projetopoo`.`Grupo_list_alunos` (
+  `id_grupo` INT,
   `nome_aluno` VARCHAR(45) NOT NULL,
-  `nome_grupo` VARCHAR(45) NOT NULL,
-  `nome_professor` VARCHAR(45),
-  PRIMARY KEY (`nome_aluno`),
-  CONSTRAINT `fk_nome_professor`
-    FOREIGN KEY (`nome_professor`)
-    REFERENCES `projetopoo`.`Grupo` (`nome_professor`)
+  `prontuario_aluno`int NOT NULL,
+  PRIMARY KEY (`id_grupo`),
+  CONSTRAINT `fk_id_grupo`
+    FOREIGN KEY (`id_grupo`)
+    REFERENCES `projetopoo`.`Grupo` (`id_grupo`)
+    ON DELETE cascade
+    ON UPDATE cascade,
+    FOREIGN KEY (`prontuario_aluno`) REFERENCES Aluno(`prontuario`)
     ON DELETE cascade
     ON UPDATE cascade
   )
@@ -157,6 +162,12 @@ SELECT * FROM ALUNO;
 SELECT * FROM PROFESSOR;
 SELECT * FROM CONTEUDOS_DISCIPLINA;
 SELECT * FROM Grupo_list_alunos;
+SELECT * FROM GRUPO;
+select Grupo.nome_grupo, count(Grupo_list_alunos.id_grupo) as 'qtd' from Grupo_list_alunos
+INNER JOIN Grupo
+ON Grupo_list_alunos.id_grupo = Grupo.id_grupo
+group by Grupo_list_alunos.id_grupo
+order by count(Grupo_list_alunos.id_grupo) desc;
 DELETE FROM ALUNO ;
 DELETE FROM DISCIPLINAS_ALUNO;
 DELETE FROM PROFESSOR;

@@ -17,7 +17,7 @@ public class AlunoDAO{
     public static void inserir(Aluno aluno) {			
 		try {
 			// cria um preparedStatement
-			String sql = "insert into aluno(nome,email,categoria_confiabilidade, tipo_usuario) values (?,?,?,?)";
+			String sql = "insert into aluno(nome,email,categoria_confiabilidade, tipo_usuario, curso) values (?,?,?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
@@ -25,6 +25,7 @@ public class AlunoDAO{
 			    stmt.setString(2, aluno.getEmail());
 			    stmt.setInt(3, aluno.getCategoriaConfiabilidade());
                 stmt.setInt(4, aluno.getTipoUsuario());
+				stmt.setString(5, aluno.getNomeCurso());
 			    stmt.execute();
 
 				sql = "select prontuario from aluno order by prontuario desc limit 1";
