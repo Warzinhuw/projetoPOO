@@ -11,12 +11,23 @@ public class Professor extends Usuario{
         //TODO Auto-generated constructor stub
     }
 
-    private String area;
+    private String area, disciplina;
+
+    public String getDisciplina() {
+        return this.disciplina;
+    }
+
+    public void setDisciplina(String disciplina) {
+        this.disciplina = disciplina;
+    }
+
     private List<Disciplina> listDisciplinas = new LinkedList<Disciplina>();
 
-    public Professor(String area){
+    public Professor(String area, String disciplina){
         this.area = area;
+        this.disciplina = disciplina;
     }
+
 
     public String getArea() {
         return this.area;
@@ -25,6 +36,7 @@ public class Professor extends Usuario{
     public void setArea(String area) {
         this.area = area;
     }
+
 
     public List<Disciplina> getListDisciplinas() {
         return this.listDisciplinas;

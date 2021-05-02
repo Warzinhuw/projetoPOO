@@ -12,7 +12,7 @@ public class ProfessorDAO {
     public static void inserir(Professor professor) {		
 		try {
 			// cria um preparedStatement
-			String sql = "insert into professor(nome,email,categoria_confiabilidade, tipo_usuario, area_estudo) values (?,?,?,?,?)";
+			String sql = "insert into professor(nome,email,categoria_confiabilidade, tipo_usuario, area_estudo, disciplina ) values (?,?,?,?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
@@ -20,8 +20,15 @@ public class ProfessorDAO {
 			    stmt.setString(2, professor.getEmail());
 			    stmt.setInt(3, professor.getCategoriaConfiabilidade());
                 stmt.setInt(4, professor.getTipoUsuario());
-                stmt.setString(5, professor.getArea());
+				stmt.setString(5, professor.getArea());
+                stmt.setString(6, professor.getDisciplina());
 			    stmt.execute();
+
+				sql = "select prontuario from professor order by prontuario desc limit 1";
+				stmt = conexao.getConn().prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery();
+				rs.next();
+				professor.setProntuario(rs.getString("prontuario"));
             }catch (SQLException e) {
                 e.printStackTrace();
             }finally{
@@ -71,6 +78,4 @@ public class ProfessorDAO {
 				e.printStackTrace();
 			}
 		}
-    
-
 }
