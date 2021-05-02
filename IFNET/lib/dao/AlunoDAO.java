@@ -74,8 +74,6 @@ public class AlunoDAO{
 		try {
 			// cria um preparedStatement
             PreparedStatement stmt = null;
-			ResultSet resultado = null;
-
 			if(DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina, aluno.getProntuario())){ //checa se já tem a disciplina add pra esse aluno
 				return false;
 			}
@@ -85,7 +83,7 @@ public class AlunoDAO{
 			    stmt = conexao.getConn().prepareStatement(sql);
                 stmt.setString(1, aluno.getProntuario());
 			    stmt.setString(2, aluno.getNome());
-				stmt.setString(2, nomeDisciplina);
+				stmt.setString(3, nomeDisciplina);
 			    stmt.execute();
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente
@@ -106,7 +104,6 @@ public class AlunoDAO{
 
 	public static void deletarAluno(String pront){
 		PreparedStatement stmt = null;
-		
 		try{
 			stmt = conexao.getConn().prepareStatement("delete from aluno where prontuario ='"+pront+"'");
 			stmt.execute();

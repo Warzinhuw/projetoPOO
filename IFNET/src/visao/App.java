@@ -239,7 +239,7 @@ public class App {
                     else
                         System.out.println("Grupo inválido!");
                 }while(nomeGrupo.equals("0") || !controle);
-                loadMenuGrupo(nomeGrupo, professor.getNome());
+                loadMenuGrupo(nomeGrupo, professor.getNome(), professor);
                 break;
             }
 
@@ -251,26 +251,86 @@ public class App {
 
     }
 
-    public static void loadMenuGrupo(String nomeGrupo, String nomeProfessor){
+    public static void loadMenuGrupo(String nomeGrupo, String nomeProfessor, Professor professor){
         Grupo grupo = GrupoDAO.recuperarGrupo(nomeGrupo, nomeProfessor);
-        System.out.print("Menu grupo -\n(a) Adicionar alunos\n(b) Remover alunos\n(c) Excluir grupo\nR: ");
+        System.out.print("Menu grupo -\n(a) Adicionar alunos\n(b) Remover alunos\n(c) Excluir grupo\n(0) Voltar ao menu anterior\nR: ");
 
         switch(leitura.nextLine().toLowerCase()){
 
             case "a":{
+                boolean valido = false;
                 String nomeAluno;
                 do{
-                    System.out.print("Digite o nome do aluno(digite 0 para ver os alunos disponíveis): ");
+                    System.out.print("Digite o nome do aluno que deseja adicionar(digite 0 para ver os alunos disponíveis): ");
                     nomeAluno = leitura.nextLine();
+                    ArrayList<String> listAlunos = GrupoDAO.getListAlunosSemGrupo(grupo);
                     if(nomeAluno.equals("0")){
-                        ArrayList<String> listAlunos = new ArrayList<>();
-                        listAlunos = GrupoDAO.getListAlunosSemGrupo(grupo);
-                        System.out.println("Alunos disponíveis: ");
+                        if(listAlunos.isEmpty())
+                            System.out.println("Nenhum aluno disponível.");
+                        else
+                            System.out.println("Alunos disponíveis: ");
                         for(int i = 0 ; i < listAlunos.size() ; i++){
                             System.out.print(listAlunos.get(i)+(i==listAlunos.size()-1 ? ".\n" : ", "));
                         }
                     }
-                }while(nomeAluno.equals("0"));
+                    else if(!listAlunos.contains(nomeAluno))
+                        System.out.println(nomeAluno+" já está nesse grupo!");
+                    else
+                        valido = true;
+                }while(nomeAluno.equals("0") || !valido);
+                GrupoDAO.inserirAluno(grupo, nomeAluno);
+                System.out.println("Aluno inserido com sucesso no grupo '"+grupo.getNomeGrupo()+"'!");
+                loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                break;
+            }
+
+            case "b":{
+                boolean valido = false;
+                String nomeAluno;
+                do{
+                    System.out.print("Digite o nome do aluno que deseja remover(digite 0 para ver os alunos disponíveis): ");
+                    nomeAluno = leitura.nextLine();
+                    ArrayList<String> listAlunos = GrupoDAO.getListAlunosNoGrupo(grupo);
+                    if(nomeAluno.equals("0")){
+                        if(listAlunos.size()==0)
+                            System.out.println("Nenhum aluno disponível.");
+                        else
+                            System.out.println("Alunos disponíveis: ");
+                        for(int i = 0 ; i < listAlunos.size() ; i++){
+                            System.out.print(listAlunos.get(i)+(i==listAlunos.size()-1 ? ".\n" : ", "));
+                        }
+                    }
+                    else if(!listAlunos.contains(nomeAluno))
+                        System.out.println(nomeAluno+" não está nesse grupo.");
+                    else
+                        valido = true;
+                }while(nomeAluno.equals("0") || !valido);
+                GrupoDAO.removerAluno(nomeAluno);
+                System.out.println("Aluno removido com sucesso do grupo '"+grupo.getNomeGrupo()+"'!");
+                loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                break;
+            }
+
+            case "c":{
+                System.out.print("Deseja realmente excluir o grupo '"+grupo.getNomeGrupo()+"'? (s) para deletar: ");
+                if(leitura.nextLine().equalsIgnoreCase("s")){
+                    GrupoDAO.excluirGrupo(grupo);
+                    System.out.println("Grupo excluído com sucesso!");
+                }
+                else
+                    System.out.println("Exclusão cancelada.");
+                loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                break;
+            }
+
+            case "0":{
+                loadMenuProfessor(professor);
+                break;
+            }
+
+            default:{
+                System.out.println("Opção inválida");
+                loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
             }
 
         }

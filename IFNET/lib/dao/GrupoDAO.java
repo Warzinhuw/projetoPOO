@@ -123,5 +123,72 @@ public class GrupoDAO {
         }
         return listAlunoDisponiveis;
 	}
+
+    public static ArrayList<String> getListAlunosNoGrupo(Grupo grupo){
+        ArrayList<String> listNomeAlunos = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet resultado = null;
+        try{
+            String sql = "select nome_aluno from grupo_list_alunos where nome_grupo = '"+grupo.getNomeGrupo()+"' and nome_professor = '"+grupo.getNomeProfessor()+"'";
+            stmt = conexao.getConn().prepareStatement(sql);
+            resultado = stmt.executeQuery();
+            while(resultado.next()){
+                listNomeAlunos.add(resultado.getString("nome_aluno"));
+            }
+            stmt.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listNomeAlunos;
+    }
+
+    public static void inserirAluno(Grupo grupo, String nomeAluno){
+        try {
+			// cria um preparedStatement
+			String sql = "insert into Grupo_list_alunos(nome_aluno, nome_grupo, nome_professor) values (?,?,?)";
+            PreparedStatement stmt = null;
+            try{
+			    stmt = conexao.getConn().prepareStatement(sql);
+                stmt.setString(1, nomeAluno);
+			    stmt.setString(2, grupo.getNomeGrupo());
+			    stmt.setString(3, grupo.getNomeProfessor());
+			    stmt.execute();
+            }catch (SQLException e) {
+                e.printStackTrace();
+            }finally{
+                stmt.close();
+            }
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+
+    public static void removerAluno(String nomeAluno){
+        PreparedStatement stmt = null;
+		try{
+			stmt = conexao.getConn().prepareStatement("delete from Grupo_list_alunos where nome_aluno = '"+nomeAluno+"'");
+			stmt.execute();
+			stmt.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+
+    public static void excluirGrupo(Grupo grupo){
+        PreparedStatement stmt = null;
+		try{
+			stmt = conexao.getConn().prepareStatement(
+                "delete from Grupo where nome_grupo = '"+grupo.getNomeGrupo()+
+                "' and nome_professor = '"+grupo.getNomeProfessor()+
+                "' and tipo_grupo = "+grupo.getTipoGrupo()
+            );
+			stmt.execute();
+			stmt.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
     
 }
