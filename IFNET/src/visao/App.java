@@ -319,7 +319,8 @@ public class App {
                     else
                         valido = true;
                 }while(nomeAluno.equals("0") || !valido);
-                GrupoDAO.inserirAluno(grupo, nomeAluno);
+                Aluno aluno = AlunoDAO.recuperarAluno(nomeAluno);
+                GrupoDAO.inserirAluno(grupo, aluno);
                 System.out.println("Aluno inserido com sucesso no grupo '"+grupo.getNomeGrupo()+"'!");
                 loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
                 break;

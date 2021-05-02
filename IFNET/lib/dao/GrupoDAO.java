@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lib.Model.Grupo.Grupo;
+import lib.Model.Usuario.Aluno;
 
 public class GrupoDAO {
 
@@ -169,15 +170,16 @@ public class GrupoDAO {
         return listDisciplinas;
     }
 
-    public static void inserirAluno(Grupo grupo, String nomeAluno){
+    public static void inserirAluno(Grupo grupo, Aluno aluno){
         try {
 			// cria um preparedStatement
-			String sql = "insert into Grupo_list_alunos(id_grupo, nome_aluno) values (?,?)";
+			String sql = "insert into Grupo_list_alunos(id_grupo, nome_aluno, prontuario_aluno) values (?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
                 stmt.setInt(1, grupo.getIdGrupo());
-                stmt.setString(2, nomeAluno);
+                stmt.setString(2, aluno.getNome());
+                stmt.setString(3, aluno.getProntuario());
 			    stmt.execute();
             }catch (SQLException e) {
                 e.printStackTrace();

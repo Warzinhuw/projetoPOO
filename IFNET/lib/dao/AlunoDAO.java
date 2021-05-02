@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 
 import lib.Model.Grupo.Grupo;
 import lib.Model.Usuario.Aluno;
+import lib.Model.Usuario.Usuario;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -99,6 +101,27 @@ public class AlunoDAO{
 			e.printStackTrace();
 		}
 		return true;
+	}
+
+	public static Aluno recuperarAluno(String nomeAluno){
+		Aluno aluno = new Aluno();
+		ResultSet resultado = null;
+		PreparedStatement stmt = null;
+		try{
+			stmt = conexao.getConn().prepareStatement("select * from Aluno where nome = '"+nomeAluno+"'");
+			resultado = stmt.executeQuery();
+			if(resultado.next()){
+                aluno.setNome(resultado.getString("Nome"));
+                aluno.setProntuario(resultado.getString("Prontuario"));
+                aluno.setEmail(resultado.getString("Email"));
+				aluno.setTipoUsuario(Usuario.TIPO_ALUNO);
+                return aluno;
+			}
+			stmt.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+        return null;
 	}
     
 
