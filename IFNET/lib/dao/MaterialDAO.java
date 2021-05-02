@@ -31,4 +31,18 @@ public class MaterialDAO {
 			e.printStackTrace();
 		}
 	}
+
+    public static void deletarMaterial(String nomeMaterial){
+			
+        PreparedStatement stmt = null;
+        
+        try{
+            stmt = conexao.getConn().prepareStatement("delete from material where nome ='"+nomeMaterial+"'");
+            stmt.execute();
+            stmt.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

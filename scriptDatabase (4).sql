@@ -34,16 +34,25 @@ ALTER TABLE Professor AUTO_INCREMENT = 500;
 -- Table `projetopoo`.`Grupo`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projetopoo`.`Grupo` (
-  `idGrupo` INT NOT NULL,
+  `nome_grupo` VARCHAR(45) NOT NULL,
   `tipo_grupo` VARCHAR(45) NULL,
-  `disciplinas_relacionadas` VARCHAR(255) NULL,
-  `Professor_prontuario` int NULL,
-  PRIMARY KEY (`idGrupo`),
-  CONSTRAINT `fk_Grupo_Professor2`
-    FOREIGN KEY (`Professor_prontuario`)
-    REFERENCES `projetopoo`.`Professor` (`prontuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `nome_professor` VARCHAR(45) NOT NULL,
+  `nome_disciplina` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`nome_professor`)
+  )
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `projetopoo`.`Grupo_list_alunos` (
+  `nome_aluno` VARCHAR(45) NOT NULL,
+  `nome_grupo` VARCHAR(45) NOT NULL,
+  `nome_professor` VARCHAR(45),
+  PRIMARY KEY (`nome_aluno`),
+  CONSTRAINT `fk_nome_professor`
+    FOREIGN KEY (`nome_professor`)
+    REFERENCES `projetopoo`.`Grupo` (`nome_professor`)
+    ON DELETE cascade
+    ON UPDATE cascade
+  )
 ENGINE = InnoDB;
 
 
@@ -93,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Aluno` (
   `Nome` VARCHAR(100) NULL,
   `email` VARCHAR(45) NULL,
   `categoria_confiabilidade` INT NULL,
-  `relacionamento` VARCHAR(100) NULL,
+  `realacionamento` VARCHAR(100) NULL,
   `curso` VARCHAR(45) NULL,
   `tipo_usuario` VARCHAR(45) NULL,
   `Curso_codigoCurso` INT NULL,
@@ -107,15 +116,22 @@ ENGINE = InnoDB;
 
 ALTER TABLE Aluno AUTO_INCREMENT = 100;
 
+CREATE TABLE IF NOT EXISTS `projetopoo`.`Disciplinas_Aluno`(
+	`aluno_prontuario` INT NOT NULL,
+    `aluno_nome` VARCHAR(45),
+    `nome` VARCHAR(45) NULL
+)
+ENGINE = InnoDB;
+
 -- -----------------------------------------------------
 -- Table `projetopoo`.`Material`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projetopoo`.`Material` (
-  `idMaterial` INT auto_increment,
+  `idMaterial` INT NOT NULL,
   `nome` VARCHAR(45) NULL,
   `area_conhecimento` VARCHAR(45) NULL,
-  `tipo_material` VARCHAR(45) NULl,
-  `Aluno_prontuario` int NULL,
+  `Aluno_idAluno` INT NOT NULL,
+  `Aluno_prontuario` int NOT NULL,
   PRIMARY KEY (`idMaterial`),
   CONSTRAINT `fk_Material_Aluno2`
     FOREIGN KEY (`Aluno_prontuario`)
@@ -124,9 +140,10 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Material` (
     ON UPDATE cascade)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `projetopoo`.`Disciplinas_Aluno`(
-	`Aluno_prontuario` INT NOT NULL,
-    `nome` VARCHAR(45) NULL
+CREATE TABLE IF NOT EXISTS `projetopoo`.`Conteudos_disciplina`(
+	`disciplina` VARCHAR(45) NOT NULL,
+    `conteudo` VARCHAR(45) NOT NULL,
+    `nome_professor` VARCHAR(45) NOT NULL
 )
 ENGINE = InnoDB;
 
@@ -137,6 +154,9 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 SELECT * FROM DISCIPLINA;
 SELECT * FROM DISCIPLINAS_ALUNO;
 SELECT * FROM ALUNO;
-SELECT * FROM Material;
+SELECT * FROM PROFESSOR;
+SELECT * FROM CONTEUDOS_DISCIPLINA;
+SELECT * FROM Grupo_list_alunos;
 DELETE FROM ALUNO ;
 DELETE FROM DISCIPLINAS_ALUNO;
+DELETE FROM PROFESSOR;

@@ -3,13 +3,13 @@ package lib.Model.Disciplina;
 public class Disciplina {
     
     private int codigoDisciplina, cargaHoraria;
-    private String nome, nomeProfessor;
+    private String nome;
 
 
-    public Disciplina(int cargaHoraria, String nome, String nomeProfessor) {
+    public Disciplina(int cargaHoraria, String nome) {
         this.cargaHoraria = cargaHoraria;
         this.nome = nome;
-        this.nomeProfessor = nomeProfessor;
+    
     }
 
     public int getCodigoDisciplina() {
@@ -35,14 +35,5 @@ public class Disciplina {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-    public String getNomeProfessor() {
-        return this.nomeProfessor;
-    }
-
-    public void setNomeProfessor(String nomeProfessor) {
-        this.nomeProfessor = nomeProfessor;
-    }
-
 
 }
