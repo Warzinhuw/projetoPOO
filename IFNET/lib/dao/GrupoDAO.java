@@ -4,8 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import lib.Model.Grupo.Grupo;
 import lib.Model.Usuario.Aluno;
@@ -219,8 +220,8 @@ public class GrupoDAO {
 		}
     }
 
-    public static Map<String, Integer> getMapGrupoMaisUsuarios(){
-        Map<String, Integer> mapGrupos = new HashMap<>();
+    public static SortedMap<Integer, String> getMapGrupoMaisUsuarios(){
+        SortedMap<Integer, String> mapGrupos = new TreeMap<>(Collections.reverseOrder());
         PreparedStatement stmt = null;
         ResultSet resultado = null;
         try{
@@ -229,12 +230,13 @@ public class GrupoDAO {
             "INNER JOIN Grupo "+
             "ON Grupo_list_alunos.id_grupo = Grupo.id_grupo "+
             "group by Grupo_list_alunos.id_grupo "+
-            "order by count(Grupo_list_alunos.id_grupo) desc "+
+            "order by count(Grupo_list_alunos.id_grupo) DESC "+
             "limit 3";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){
-                mapGrupos.put(resultado.getString("Grupo.nome_grupo"), resultado.getInt("count(Grupo_list_alunos.id_grupo)"));
+                System.out.println("Map: "+resultado.getInt("count(Grupo_list_alunos.id_grupo)")+" "+resultado.getString("Grupo.nome_grupo"));
+                mapGrupos.put(resultado.getInt("count(Grupo_list_alunos.id_grupo)"), resultado.getString("Grupo.nome_grupo"));
             }
             stmt.close();
         }catch (SQLException e) {

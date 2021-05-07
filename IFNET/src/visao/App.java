@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.SortedMap;
 
 import lib.Model.Disciplina.Disciplina;
 import lib.Model.Grupo.Grupo;
@@ -15,6 +16,8 @@ import lib.dao.DisciplinaDAO;
 import lib.dao.GrupoDAO;
 import lib.dao.MaterialDAO;
 import lib.dao.ProfessorDAO;
+import lib.dao.RelacionamentoDAO;
+import lib.dao.UsuarioDAO;
 
 import java.sql.*;  
 import java.sql.DriverManager;
@@ -90,10 +93,10 @@ public class App {
                     loadMenuAluno(aluno);
                 }
                 else{
-                System.out.print("\nDigite a area de estudo do professor: ");
-                String area = leitura.nextLine();
-                System.out.println("\nDisciplinas disponíveis: ");
-                ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
+                    System.out.print("\nDigite a area de estudo do professor: ");
+                    String area = leitura.nextLine();
+                    System.out.println("\nDisciplinas disponíveis: ");
+                    ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
                 for(int i = 0 ; i < listDisciplinas.size() ; i++){
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
                 }
@@ -107,9 +110,9 @@ public class App {
                 if(DisciplinaDAO.checarExistenciaDisciplina(disciplina)){
                     ProfessorDAO.inserir(professor);
                     if(DisciplinaDAO.adicionarDisciplinaProfessor(professor, disciplina)){
-                    System.out.println("Professor(a) adicionado(a)!");
-                    System.out.println("Prontuario: "+professor.getProntuario());
-                    loadMenuProfessor(professor);
+                        System.out.println("Professor(a) adicionado(a)!");
+                        System.out.println("Prontuario: "+professor.getProntuario());
+                        loadMenuProfessor(professor);
                     }
                     else
                         System.out.println("\nDisciplina já cadastrada anteriormente!");
@@ -171,7 +174,7 @@ public class App {
     public static void loadMenuAluno(Aluno aluno){
         Material material = new Material();
 
-        System.out.print("\nBem vindo(a) "+aluno.getNome()+"!\n\n"+ "Cadastrar: "+"\n(a) disciplina \n(b) livros \n(c) apostilas \n(d) material da web \n(0 para sair) ");
+        System.out.print("\nBem vindo(a) "+aluno.getNome()+"!\n\n"+ "Entre com a opção desejada: "+"\n(a) Cadastrar disciplina \n(b) Cadastrar livros \n(c) Cadastrar apostilas \n(d) Cadastrar material da web \n(e) Gerenciar relacionamentos(0 para sair) ");
         System.out.print("\nEntre com uma opção:");
         switch(leitura.nextLine().toLowerCase()){
 
@@ -217,6 +220,7 @@ public class App {
                 MaterialDAO.inserir(material);
                 System.out.println("Material adicionado com sucesso!");
                 loadMenuAluno(aluno);
+                break;
             }
 
             case "d":{
@@ -228,6 +232,12 @@ public class App {
                 MaterialDAO.inserir(material);
                 System.out.println("Material adicionado com sucesso!");
                 loadMenuAluno(aluno);
+                break;
+            }
+
+            case "e":{
+                loadMenuRelacionamento(aluno);
+                break;
             }
 
             case "0":{
@@ -331,8 +341,10 @@ public class App {
                     nomeAluno = leitura.nextLine();
                     ArrayList<String> listAlunos = GrupoDAO.getListAlunosSemGrupo(grupo);
                     if(nomeAluno.equals("0")){
-                        if(listAlunos.isEmpty())
+                        if(listAlunos.isEmpty()){
                             System.out.println("Nenhum aluno disponível.");
+                            loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                        }
                         else
                             System.out.println("Alunos disponíveis: ");
                         for(int i = 0 ; i < listAlunos.size() ; i++){
@@ -344,7 +356,7 @@ public class App {
                     else
                         valido = true;
                 }while(nomeAluno.equals("0") || !valido);
-                Aluno aluno = AlunoDAO.recuperarAluno(nomeAluno);
+                Aluno aluno = (Aluno) UsuarioDAO.recuperarUsuario(nomeAluno);
                 GrupoDAO.inserirAluno(grupo, aluno);
                 System.out.println("Aluno inserido com sucesso no grupo '"+grupo.getNomeGrupo()+"'!");
                 loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
@@ -359,8 +371,10 @@ public class App {
                     nomeAluno = leitura.nextLine();
                     ArrayList<String> listAlunos = GrupoDAO.getListAlunosNoGrupo(grupo);
                     if(nomeAluno.equals("0")){
-                        if(listAlunos.size()==0)
+                        if(listAlunos.isEmpty()){
                             System.out.println("Nenhum aluno disponível.");
+                            loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                        }
                         else
                             System.out.println("Alunos disponíveis: ");
                         for(int i = 0 ; i < listAlunos.size() ; i++){
@@ -414,14 +428,15 @@ public class App {
             }
 
             case "b":{
-                Map<String, Integer> mapGrupos = GrupoDAO.getMapGrupoMaisUsuarios();
+                SortedMap<Integer, String> mapGrupos = GrupoDAO.getMapGrupoMaisUsuarios();
                 if(mapGrupos.size()==0){
                     System.out.println("Nenhum grupo encontrado.");
                 }
                 else{
-                    System.out.println((mapGrupos.size()==1 ? "O" : "Os ")+(mapGrupos.size()==1 ? " grupo com mais usuários:" : (mapGrupos.size()+" primeiros grupos com mais usuários: ")));
-                    for(Map.Entry<String, Integer> entry : mapGrupos.entrySet()){
-                        System.out.println(entry.getKey()+" - "+(entry.getValue() == 1 ? "1 aluno" : (entry.getValue()+" alunos")));
+                    System.out.println((mapGrupos.size()==1 ? "O" : "Os ")+
+                    (mapGrupos.size()==1 ? " grupo com mais usuários:" : (mapGrupos.size()+" primeiros grupos com mais usuários: ")));
+                    for(Map.Entry<Integer, String> entry : mapGrupos.entrySet()){
+                        System.out.println(entry.getValue()+" - "+(entry.getKey() == 1 ? "1 aluno" : (entry.getKey()+" alunos")));
                     }
                 }
                 loadMenuConsultas();
@@ -440,6 +455,7 @@ public class App {
                         System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? ".\n" : ", "));
                     }
                 }
+                loadMenuConsultas();
                 break;
             }
 
@@ -532,6 +548,20 @@ public class App {
             }
         }
     }
+
+    public static void loadMenuRelacionamento(Usuario usuario){
+        System.out.print("Menu - \n(a) Adicionar usuário \n(b) Excluir usuário \n(0) para voltar ao menu anterior");
+        String nomeUsuario = leitura.nextLine();
+        Usuario outroUsuario;
+        if((outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario)) != null){
+            RelacionamentoDAO.criarRelacionamento(usuario, outroUsuario);
+            System.out.println("Relacionamento criado com sucesso!");
+        }
+        else
+            System.out.println("Usuário não encontrado.");
+        loadMenuRelacionamento(usuario);
+    }
+
 }
                 
 
