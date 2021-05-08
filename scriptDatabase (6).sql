@@ -48,7 +48,6 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Grupo_list_alunos` (
   `id_grupo` INT,
   `nome_aluno` VARCHAR(45) NOT NULL,
   `prontuario_aluno`int NOT NULL,
-  PRIMARY KEY (`id_grupo`),
   CONSTRAINT `fk_id_grupo`
     FOREIGN KEY (`id_grupo`)
     REFERENCES `projetopoo`.`Grupo` (`id_grupo`)
@@ -59,7 +58,6 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Grupo_list_alunos` (
     ON UPDATE cascade
   )
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `projetopoo`.`Disciplina`
@@ -80,24 +78,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `projetopoo`.`Curso`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `projetopoo`.`Curso` (
-  `codigoCurso` INT NOT NULL,
-  `nome` VARCHAR(45) NULL,
-  `nivel` VARCHAR(45) NULL,
-  `numeroSemestre` INT NULL,
-  `cargaHoraria` VARCHAR(45) NULL,
-  `profCoordenador` INT NULL,
-  `Disciplina_codigoDisciplina` INT NOT NULL,
-  PRIMARY KEY (`codigoCurso`),
-  CONSTRAINT `fk_Curso_Disciplina1`
-    FOREIGN KEY (`Disciplina_codigoDisciplina`)
-    REFERENCES `projetopoo`.`Disciplina` (`codigoDisciplina`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `projetopoo`.`Aluno`
@@ -109,14 +89,8 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Aluno` (
   `categoria_confiabilidade` INT NULL,
   `realacionamento` VARCHAR(100) NULL,
   `curso` VARCHAR(45) NULL,
-  `tipo_usuario` VARCHAR(45) NULL,
-  `Curso_codigoCurso` INT NULL,
-  PRIMARY KEY (`prontuario`),
-  CONSTRAINT `fk_Aluno_Curso2`
-    FOREIGN KEY (`Curso_codigoCurso`)
-    REFERENCES `projetopoo`.`Curso` (`codigoCurso`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `tipo_usuario` VARCHAR(45) NULL
+  )
 ENGINE = InnoDB;
 
 ALTER TABLE Aluno AUTO_INCREMENT = 100;
@@ -132,11 +106,11 @@ ENGINE = InnoDB;
 -- Table `projetopoo`.`Material`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projetopoo`.`Material` (
-  `idMaterial` INT NOT NULL,
+  `idMaterial` INT auto_increment,
   `nome` VARCHAR(45) NULL,
   `area_conhecimento` VARCHAR(45) NULL,
-  `Aluno_idAluno` INT NOT NULL,
-  `Aluno_prontuario` int NOT NULL,
+  `tipo_material` VARCHAR(45) NULL,
+  `Aluno_prontuario` int NULL,
   PRIMARY KEY (`idMaterial`),
   CONSTRAINT `fk_Material_Aluno2`
     FOREIGN KEY (`Aluno_prontuario`)
@@ -152,6 +126,23 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Conteudos_disciplina`(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `projetopoo`.`Relacionamentos`(
+	`usuario_prontuario` INT NOT NULL,
+    `nome_usuario` VARCHAR(45) NOT NULL,
+    `nome_outro_usuario_aluno` VARCHAR(45) NULL,
+    `prontuario_outro_usuario_aluno` INT NULL,
+    `nome_outro_usuario_professor` VARCHAR(45) NULL,
+    `prontuario_outro_usuario_professor` INT NULL,
+    `grau_confiabilidade` VARCHAR(45) NOT NULL,
+    FOREIGN KEY (`prontuario_outro_usuario_aluno`) REFERENCES Aluno(Prontuario)
+    ON DELETE cascade
+    ON UPDATE cascade,
+    FOREIGN KEY (`prontuario_outro_usuario_professor`) REFERENCES Professor(Prontuario)
+    ON DELETE cascade
+    ON UPDATE cascade
+)
+ENGINE = InnoDB;
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -160,14 +151,21 @@ SELECT * FROM DISCIPLINA;
 SELECT * FROM DISCIPLINAS_ALUNO;
 SELECT * FROM ALUNO;
 SELECT * FROM PROFESSOR;
+SELECT * FROM Material;
 SELECT * FROM CONTEUDOS_DISCIPLINA;
 SELECT * FROM Grupo_list_alunos;
 SELECT * FROM GRUPO;
+
+SELECT usuario_prontuario, (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) as qtd  FROM Relacionamentos
+group by usuario_prontuario
+order by (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) desc;
+
 select Grupo.nome_grupo, count(Grupo_list_alunos.id_grupo) as 'qtd' from Grupo_list_alunos
 INNER JOIN Grupo
 ON Grupo_list_alunos.id_grupo = Grupo.id_grupo
 group by Grupo_list_alunos.id_grupo
 order by count(Grupo_list_alunos.id_grupo) desc;
+
 DELETE FROM ALUNO ;
 DELETE FROM DISCIPLINAS_ALUNO;
 DELETE FROM PROFESSOR;

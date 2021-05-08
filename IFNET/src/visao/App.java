@@ -18,6 +18,7 @@ import lib.dao.MaterialDAO;
 import lib.dao.ProfessorDAO;
 import lib.dao.RelacionamentoDAO;
 import lib.dao.UsuarioDAO;
+import lib.Excecao.*;
 
 import java.sql.*;  
 import java.sql.DriverManager;
@@ -48,8 +49,10 @@ public class App {
             }
 
             case "c":{
-                loadMenuExcluir();
+        
+                loadMenuExcluir() ;
                 break;
+            
             }
 
             case "d":{
@@ -83,20 +86,20 @@ public class App {
                 if(opcaoMenu.equalsIgnoreCase("a")){
 
                     Aluno aluno = new Aluno();
-                    System.out.print("\nDigite o nome do Curso: ");
+                    System.out.print("Digite o nome do Curso: ");
                     String nomeC = leitura.nextLine();
                     aluno.setNomeCurso(nomeC);
                     aluno.cadastrarUsuario(nome, email, 0);
                     AlunoDAO.inserir(aluno);
-                    System.out.println("Aluno(a) adicionado(a)!");
+                    System.out.println("\nAluno(a) adicionado(a)!");
                     System.out.println("Prontuario: "+aluno.getProntuario());
                     loadMenuAluno(aluno);
                 }
                 else{
-                    System.out.print("\nDigite a area de estudo do professor: ");
-                    String area = leitura.nextLine();
-                    System.out.println("\nDisciplinas disponíveis: ");
-                    ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
+                System.out.print("Digite a area de estudo do professor: ");
+                String area = leitura.nextLine();
+                System.out.println("\nDisciplinas disponíveis: ");
+                ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
                 for(int i = 0 ; i < listDisciplinas.size() ; i++){
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
                 }
@@ -107,34 +110,37 @@ public class App {
                 professor.setArea(area);
                 professor.setDisciplina(disciplina);
                 professor.cadastrarUsuario(nome, email, 0);
-                if(DisciplinaDAO.checarExistenciaDisciplina(disciplina)){
-                    ProfessorDAO.inserir(professor);
-                    if(DisciplinaDAO.adicionarDisciplinaProfessor(professor, disciplina)){
-                        System.out.println("Professor(a) adicionado(a)!");
-                        System.out.println("Prontuario: "+professor.getProntuario());
+                try {
+                        DisciplinaDAO.checarExistenciaDisciplina(disciplina);
+                        ProfessorDAO.inserir(professor);
+                        if(DisciplinaDAO.adicionarDisciplinaProfessor(professor, disciplina)){
+                        System.out.println("\nProfessor(a) adicionado(a)!");
+                        System.out.println("\nProntuario: "+professor.getProntuario());
                         loadMenuProfessor(professor);
-                    }
-                    else
-                        System.out.println("\nDisciplina já cadastrada anteriormente!");
-                }
-                else{
-                    System.out.println("Disciplina não encontrada!");
-                }
-                   
+                        }else 
+                            System.out.println("\nDisciplina já cadastrada anteriormente!");
+                            loadMenuCadastros();
+                } catch (NaoEncontrado e) {
+                    System.out.println(e.getMessage());
                 }
                 break;
+                }
             }
 
             case"c":{
                 String nomeDisciplina;
-                int cargaHoraria;
+                String cargaHoraria;
                 System.out.print("Nome da disciplina: ");
                 nomeDisciplina = leitura.nextLine();
                 System.out.print("Carga horária: ");
-                cargaHoraria = Integer.parseInt(leitura.nextLine());
+                cargaHoraria = leitura.nextLine();
                 Disciplina disciplina = new Disciplina(cargaHoraria, nomeDisciplina);
-                DisciplinaDAO.inserir(disciplina);
-                System.out.println("Disciplina adicionada!");
+                try{
+                    DisciplinaDAO.inserir(disciplina);
+                    System.out.println("Disciplina adicionada!");
+                }catch(FormatoInvalido f){
+                    System.out.println(f.getMessage());
+                }
                 loadMenuCadastros();
                 break;
             }
@@ -184,14 +190,14 @@ public class App {
                 }
                 System.out.print("\nQual disciplina deseja cadastrar?\nR: ");
                 String disciplina = leitura.nextLine();
-                if(DisciplinaDAO.checarExistenciaDisciplina(disciplina)){
+                try{
+                    DisciplinaDAO.checarExistenciaDisciplina(disciplina);
                     if(AlunoDAO.adicionarDisciplina(aluno, disciplina))
                         System.out.println("\nDisciplina adicionada com sucesso!");
                     else
                         System.out.println("\nDisciplina já cadastrada anteriormente!");
-                }
-                else{
-                    System.out.println("Disciplina não encontrada!");
+                }catch(NaoEncontrado e){
+                    System.out.println(e.getMessage());
                 }
                 loadMenuAluno(aluno);
                 break;
@@ -203,7 +209,7 @@ public class App {
                 System.out.print("Digite a area de conhecimento: ");
                 String area_conhecimento  = leitura.nextLine();
                 material.cadastrarMaterial(nome_material, area_conhecimento, "Livro");
-                MaterialDAO.inserir(material);
+                MaterialDAO.inserir(material, aluno.getProntuario());
                 System.out.println("Material adicionado com sucesso!");
                 loadMenuAluno(aluno);
                 break;
@@ -215,7 +221,7 @@ public class App {
                 System.out.print("Digite a area de conhecimento: ");
                 String area_conhecimento  = leitura.nextLine();
                 material.cadastrarMaterial(nome_material, area_conhecimento, "Apostila");
-                MaterialDAO.inserir(material);
+                MaterialDAO.inserir(material, aluno.getProntuario());
                 System.out.println("Material adicionado com sucesso!");
                 loadMenuAluno(aluno);
                 break;
@@ -227,7 +233,7 @@ public class App {
                 System.out.print("Digite a area de conhecimento: ");
                 String area_conhecimento  = leitura.nextLine();
                 material.cadastrarMaterial(nome_material, area_conhecimento, "Material da WEB");
-                MaterialDAO.inserir(material);
+                MaterialDAO.inserir(material,aluno.getProntuario());
                 System.out.println("Material adicionado com sucesso!");
                 loadMenuAluno(aluno);
                 break;
@@ -332,7 +338,7 @@ public class App {
 
     public static void loadMenuGrupo(String nomeGrupo, String nomeProfessor, Professor professor){
         Grupo grupo = GrupoDAO.recuperarGrupo(nomeGrupo, nomeProfessor);
-        System.out.print("Menu grupo -\n(a) Adicionar alunos\n(b) Remover alunos\n(c) Excluir grupo\n(0) Voltar ao menu anterior\nR: ");
+        System.out.print("\nMenu grupo -\n(a) Adicionar alunos\n(b) Remover alunos\n(c) Excluir grupo\n(0) Voltar ao menu anterior\nR: ");
 
         switch(leitura.nextLine().toLowerCase()){
 
@@ -354,8 +360,10 @@ public class App {
                             System.out.print(listAlunos.get(i)+(i==listAlunos.size()-1 ? ".\n" : ", "));
                         }
                     }
-                    else if(!listAlunos.contains(nomeAluno))
+                    else if(!listAlunos.contains(nomeAluno)){
                         System.out.println(nomeAluno+" já está nesse grupo!");
+                        loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                    }
                     else
                         valido = true;
                 }while(nomeAluno.equals("0") || !valido);
@@ -384,8 +392,10 @@ public class App {
                             System.out.print(listAlunos.get(i)+(i==listAlunos.size()-1 ? ".\n" : ", "));
                         }
                     }
-                    else if(!listAlunos.contains(nomeAluno))
+                    else if(!listAlunos.contains(nomeAluno)){
                         System.out.println(nomeAluno+" não está nesse grupo.");
+                        loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                    }
                     else
                         valido = true;
                 }while(nomeAluno.equals("0") || !valido);
@@ -400,6 +410,7 @@ public class App {
                 if(leitura.nextLine().equalsIgnoreCase("s")){
                     GrupoDAO.excluirGrupo(grupo);
                     System.out.println("Grupo excluído com sucesso!");
+                    loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
                 }
                 else
                     System.out.println("Exclusão cancelada.");
@@ -422,7 +433,7 @@ public class App {
     }
 
     public static void loadMenuConsultas(){
-        System.out.print("-- Menu -- \n(a) Usuários com mais relacionamentos \n(b) Grupos com mais usuários \n(c) Grupos de pesquisa por disciplina \n(0) voltar ao menu anterior \nR: ");
+        System.out.print("\n-- Menu -- \n(a) Usuários com mais relacionamentos \n(b) Grupos com mais usuários \n(c) Grupos de pesquisa por disciplina \n(0) voltar ao menu anterior \nR: ");
 
         switch(leitura.nextLine().toLowerCase()){
 
@@ -446,6 +457,7 @@ public class App {
                 SortedMap<Integer, String> mapGrupos = GrupoDAO.getMapGrupoMaisUsuarios();
                 if(mapGrupos.isEmpty()){
                     System.out.println("Nenhum grupo encontrado.");
+                    loadMenuConsultas();
                 }
                 else{
                     System.out.println((mapGrupos.size()==1 ? "O" : "Os ")+
@@ -462,8 +474,11 @@ public class App {
                 System.out.print("Entre com a disciplina: ");
                 String disciplina = leitura.nextLine();
                 ArrayList<String> listDisciplinas = GrupoDAO.getListGruposPorDisciplina(disciplina);
-                if(listDisciplinas.isEmpty())
+                if(listDisciplinas.isEmpty()){
                     System.out.println("Nenhum grupo encontrado relacionado a essa disciplina.");
+                    loadMenuConsultas();
+                }
+                  
                 else{
                     System.out.println("Grupos relacionados a essa disciplina: ");
                     for(int i = 0 ; i<listDisciplinas.size() ; i ++){
@@ -499,9 +514,16 @@ public class App {
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? ".\n" : ", "));
                 }
             }
-            else if(DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina))
-                controle = true;
-            else
+            else {
+                try{
+                    DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina);
+                    controle = true;
+                }catch(NaoEncontrado e){
+                    System.out.println(e.getMessage());
+                }
+            }
+                
+         
                 System.out.println("Disciplina inválida!");
         }while(nomeDisciplina.equals("0") || !controle);
         return nomeDisciplina;
@@ -517,19 +539,33 @@ public class App {
         String opcaoExclusao = leitura.nextLine();
         switch (opcaoExclusao){
             case "a":{
-                System.out.print("Digite o prontuario do aluno que deseja excluir: ");
-                String pront = leitura.nextLine();
-                AlunoDAO.deletarAluno(pront);
-                System.out.print("Aluno removido com sucesso!");
-                loadMenuExcluir();
-                break;
+
+                
+                    System.out.print("Digite o nome do aluno que deseja excluir: ");
+                    String nome = leitura.nextLine();
+                    try{
+                        UsuarioDAO.checarExistenciaUsuario(nome);
+                        AlunoDAO.deletarAluno(nome);
+                        System.out.print("Aluno removido com sucesso!");
+                    }catch(NaoEncontrado e){
+                        System.out.println(e.getMessage());
+                    }
+                   
+                    loadMenuExcluir();
+                    break;
+                
             }
             
             case "b":{
-                System.out.print("Digite o prontuario do professor que deseja excluir: ");
-                String prontt = leitura.nextLine();
-                ProfessorDAO.deletarProfessor(prontt);
+                System.out.print("Digite o nome do professor que deseja excluir: ");
+                String nome = leitura.nextLine();
+            try{
+                UsuarioDAO.checarExistenciaUsuario(nome);
+                AlunoDAO.deletarAluno(nome);
                 System.out.print("Professor removido com sucesso!");
+            }catch(NaoEncontrado e){
+                System.out.println(e.getMessage());
+            }
                 loadMenuExcluir();
                 break;
             }
@@ -538,8 +574,14 @@ public class App {
             case "c":{
                 System.out.print("Digite o nome da disciplina que deseja excluir: ");
                 String nomeDisciplina = leitura.nextLine();
-                DisciplinaDAO.deletarDisciplina(nomeDisciplina);
-                System.out.print("Disciplina removida com sucesso!");
+                try{
+                    DisciplinaDAO.checarExistenciaDisciplina(nomeDisciplina);
+                    DisciplinaDAO.deletarDisciplina(nomeDisciplina);
+                    System.out.print("Disciplina removida com sucesso!");
+                }catch(NaoEncontrado e){
+                    System.out.println(e.getMessage());
+                }
+                
                 loadMenuExcluir();
                 break;
             }
@@ -547,8 +589,15 @@ public class App {
             case "d":{
                 System.out.print("Digite o nome do material que deseja excluir: ");
                 String nomeMaterial = leitura.nextLine();
-                MaterialDAO.deletarMaterial(nomeMaterial);
-                System.out.print("Material removido com sucesso!");
+
+                try{
+                    MaterialDAO.checarExistenciaMaterial(nomeMaterial);
+                    MaterialDAO.deletarMaterial(nomeMaterial);
+                    System.out.print("Material removido com sucesso!");
+                }catch(NaoEncontrado e){
+                    System.out.println(e.getMessage());
+                }
+               
                 loadMenuExcluir();
                 break;
             }
@@ -565,35 +614,38 @@ public class App {
     }
 
     public static void loadMenuRelacionamento(Usuario usuario){
-        System.out.print("Menu - \n(a) Adicionar usuário \n(b) Excluir usuário \n(0) para voltar ao menu anterior\nR: ");
+        System.out.print("\nMenu - \n(a) Adicionar usuário \n(b) Excluir usuário \n(0) para voltar ao menu anterior\nR: ");
 
         switch(leitura.nextLine().toLowerCase()){
             case "a":{
-                System.out.println("Digite o nome do usuário que deseja adicionar: ");
+                System.out.print("\nDigite o nome do usuário que deseja adicionar: ");
                 String nomeUsuario = leitura.nextLine();
                 Usuario outroUsuario;
-                if((outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario)) != null){
-                    System.out.println("Qual o grau de confiabilidade desse usuário?\nR: ");
+                try {
+                    outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario);
+                    System.out.print("Qual o grau de confiabilidade desse usuário?\nR: ");
                     RelacionamentoDAO.criarRelacionamento(usuario, outroUsuario, leitura.nextLine());
                     System.out.println("Relacionamento criado com sucesso!");
+                    
+                } catch (NaoEncontrado e) {
+                    System.out.println(e.getMessage());
                 }
-                else
-                    System.out.println("Usuário não encontrado.");
 
                 loadMenuRelacionamento(usuario);
                 break;
             }
 
             case "b":{
-                System.out.println("Digite o nome do usuário que deseja remover: ");
+                System.out.print("\nDigite o nome do usuário que deseja remover: ");
                 String nomeUsuario = leitura.nextLine();
                 Usuario outroUsuario;
-                if((outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario)) != null){
+                try {
+                    outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario);
                     RelacionamentoDAO.excluirRelacionamento(usuario, outroUsuario);
                     System.out.println("Relação com "+outroUsuario.getNome()+" excluída.");
+                } catch (NaoEncontrado e) {
+                   System.out.println(e.getMessage());
                 }
-                else
-                    System.out.println("Usuário não encontrado.");
 
                 loadMenuRelacionamento(usuario);
                 break;

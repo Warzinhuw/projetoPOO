@@ -7,6 +7,10 @@ import java.util.ArrayList;
 
 import javax.print.DocFlavor.STRING;
 
+import com.mysql.cj.util.StringUtils;
+
+import lib.Excecao.FormatoInvalido;
+import lib.Excecao.NaoEncontrado;
 import lib.Model.Disciplina.Disciplina;
 import lib.Model.Usuario.Professor;
 
@@ -14,16 +18,19 @@ public class DisciplinaDAO {
 
     private static Conexao conexao = new Conexao();
 
-    public static void inserir(Disciplina disciplina) {	
+    public static void inserir(Disciplina disciplina) throws FormatoInvalido {	
+        if (!StringUtils.isStrictlyNumeric(disciplina.getCargaHoraria()))
+            throw new FormatoInvalido();
 
         try {
 			// cria um preparedStatement
 			String sql = "insert into disciplina(nome, carga_horaria) values (?,?)";
             PreparedStatement stmt = null;
+
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
 				stmt.setString(1, disciplina.getNome());
-                stmt.setInt(2, disciplina.getCargaHoraria());
+                stmt.setString(2, disciplina.getCargaHoraria());
 			    stmt.execute();
             }catch (SQLException e) {
                 // TODO Bloco catch gerado automaticamente
@@ -106,7 +113,7 @@ public class DisciplinaDAO {
 		}
 	}
     
-    public static boolean checarExistenciaDisciplina(String nome){
+    public static boolean checarExistenciaDisciplina(String nome) throws NaoEncontrado{
         boolean valido = false;
         try{
             String sql = "select nome from disciplina where nome = '"+nome+"'";
@@ -120,7 +127,10 @@ public class DisciplinaDAO {
         }catch (SQLException e) {
             e.printStackTrace();
         }
-        return valido;
+        if (valido)
+            return true;
+
+        throw new NaoEncontrado(new Disciplina("nome", "nome"));
     }
 
     public static boolean checarExistenciaDisciplina(String nome, String prontuario){

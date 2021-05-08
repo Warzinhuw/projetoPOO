@@ -126,10 +126,10 @@ public class AlunoDAO{
 	}
     
 
-	public static void deletarAluno(String pront){
+	public static void deletarAluno(String nome){
 		PreparedStatement stmt = null;
 		try{
-			stmt = conexao.getConn().prepareStatement("delete from aluno where prontuario ='"+pront+"'");
+			stmt = conexao.getConn().prepareStatement("delete from aluno where nome ='"+nome+"'");
 			stmt.execute();
 			stmt.close();
 		}catch (SQLException e) {
