@@ -150,8 +150,6 @@ public class App {
         }
     }
         
-    
-
     public static void loadMenuLogIn(){
 
         Aluno aluno = new Aluno();
@@ -174,7 +172,7 @@ public class App {
     public static void loadMenuAluno(Aluno aluno){
         Material material = new Material();
 
-        System.out.print("\nBem vindo(a) "+aluno.getNome()+"!\n\n"+ "Entre com a opção desejada: "+"\n(a) Cadastrar disciplina \n(b) Cadastrar livros \n(c) Cadastrar apostilas \n(d) Cadastrar material da web \n(e) Gerenciar relacionamentos(0 para sair) ");
+        System.out.print("\nBem vindo(a) "+aluno.getNome()+"!\n\n"+ "Entre com a opção desejada: "+"\n(a) Cadastrar disciplina \n(b) Cadastrar livros \n(c) Cadastrar apostilas \n(d) Cadastrar material da web \n(e) Gerenciar relacionamentos\n(0 para sair) ");
         System.out.print("\nEntre com uma opção:");
         switch(leitura.nextLine().toLowerCase()){
 
@@ -256,10 +254,10 @@ public class App {
 
     public static void loadMenuProfessor(Professor professor){
         System.out.print("Bem vindo(a) "+professor.getNome()+"!\n\n"+
-        "\n(a) Inserir conteúdo \n(b) Criar grupo de trabalho \n(c) Criar grupo de pesquisa \n(d) Gerenciar grupos \n(0 para menu inicial)\n ");
+        "\n(a) Inserir conteúdo \n(b) Criar grupo de trabalho \n(c) Criar grupo de pesquisa \n(d) Gerenciar grupos \n(e) Gerenciar relacionamentos \n(0 para menu inicial)\n ");
         System.out.print("\nEntre com uma opção:");
-        String opcaoMenu;
-        switch(opcaoMenu=leitura.nextLine().toLowerCase()){
+        String opcaoMenu=leitura.nextLine().toLowerCase();
+        switch(opcaoMenu){
 
             case "a":{
                 System.out.println("Suas disciplinas disponíveis: ");
@@ -316,6 +314,11 @@ public class App {
                         System.out.println("Grupo inválido!");
                 }while(nomeGrupo.equals("0") || !controle);
                 loadMenuGrupo(nomeGrupo, professor.getNome(), professor);
+                break;
+            }
+
+            case "e":{
+                loadMenuRelacionamento(professor);
                 break;
             }
 
@@ -424,12 +427,24 @@ public class App {
         switch(leitura.nextLine().toLowerCase()){
 
             case "a":{
+                SortedMap<Integer, String> mapRelacionamentos = RelacionamentoDAO.getMapGrupoMaisUsuarios();
+                if(mapRelacionamentos.isEmpty()){
+                    System.out.println("Nenhum relacionamento encontrado.");
+                }
+                else{
+                    System.out.println((mapRelacionamentos.size()==1 ? "O" : "Os ")+
+                    (mapRelacionamentos.size()==1 ? " usuário com mais relacionamento: " : (mapRelacionamentos.size()+" primeiros usuários com mais relacionamentos: ")));
+                    for(Map.Entry<Integer, String> entry : mapRelacionamentos.entrySet()){
+                        System.out.println(entry.getValue()+" - "+(entry.getKey() == 1 ? "1 relacionamento" : (entry.getKey()+" relacionamentos")));
+                    }
+                }
+                loadMenuConsultas();
                 break;
             }
 
             case "b":{
                 SortedMap<Integer, String> mapGrupos = GrupoDAO.getMapGrupoMaisUsuarios();
-                if(mapGrupos.size()==0){
+                if(mapGrupos.isEmpty()){
                     System.out.println("Nenhum grupo encontrado.");
                 }
                 else{
@@ -550,16 +565,55 @@ public class App {
     }
 
     public static void loadMenuRelacionamento(Usuario usuario){
-        System.out.print("Menu - \n(a) Adicionar usuário \n(b) Excluir usuário \n(0) para voltar ao menu anterior");
-        String nomeUsuario = leitura.nextLine();
-        Usuario outroUsuario;
-        if((outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario)) != null){
-            RelacionamentoDAO.criarRelacionamento(usuario, outroUsuario);
-            System.out.println("Relacionamento criado com sucesso!");
+        System.out.print("Menu - \n(a) Adicionar usuário \n(b) Excluir usuário \n(0) para voltar ao menu anterior\nR: ");
+
+        switch(leitura.nextLine().toLowerCase()){
+            case "a":{
+                System.out.println("Digite o nome do usuário que deseja adicionar: ");
+                String nomeUsuario = leitura.nextLine();
+                Usuario outroUsuario;
+                if((outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario)) != null){
+                    System.out.println("Qual o grau de confiabilidade desse usuário?\nR: ");
+                    RelacionamentoDAO.criarRelacionamento(usuario, outroUsuario, leitura.nextLine());
+                    System.out.println("Relacionamento criado com sucesso!");
+                }
+                else
+                    System.out.println("Usuário não encontrado.");
+
+                loadMenuRelacionamento(usuario);
+                break;
+            }
+
+            case "b":{
+                System.out.println("Digite o nome do usuário que deseja remover: ");
+                String nomeUsuario = leitura.nextLine();
+                Usuario outroUsuario;
+                if((outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario)) != null){
+                    RelacionamentoDAO.excluirRelacionamento(usuario, outroUsuario);
+                    System.out.println("Relação com "+outroUsuario.getNome()+" excluída.");
+                }
+                else
+                    System.out.println("Usuário não encontrado.");
+
+                loadMenuRelacionamento(usuario);
+                break;
+            }
+
+            case "0":{
+                if(usuario.getClass() == Aluno.class)
+                    loadMenuAluno((Aluno) usuario);
+                else
+                    loadMenuProfessor((Professor) usuario);
+                break;
+            }
+
+            default:{
+                System.out.println("Opção inválida!");
+                loadMenuRelacionamento(usuario);
+                break;
+            }
+
         }
-        else
-            System.out.println("Usuário não encontrado.");
-        loadMenuRelacionamento(usuario);
     }
 
 }
