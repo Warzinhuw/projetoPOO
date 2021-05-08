@@ -2,7 +2,9 @@ package lib.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
+import lib.Excecao.NaoEncontrado;
 import lib.Model.Usuario.Aluno;
 import lib.Model.Usuario.Professor;
 import lib.Model.Usuario.Usuario;
@@ -11,7 +13,7 @@ public class UsuarioDAO {
 
     private static Conexao conexao = new Conexao();
 
-    public static Usuario checarExistenciaUsuario(String nome){
+    public static Usuario checarExistenciaUsuario(String nome) throws NaoEncontrado{
 
         try{
             String sql = "select nome from Aluno where nome = '"+nome+"'";
@@ -31,8 +33,7 @@ public class UsuarioDAO {
         }catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
-
+        throw new NaoEncontrado();
     }
 
     public static Usuario recuperarUsuario(String nomeUsuario){

@@ -69,13 +69,13 @@ public class RelacionamentoDAO {
         ResultSet resultado = null;
         try{
             String sql = 
-            "SELECT nome_usuario, (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) as qtd FROM Relacionamentos"+
-            "group by usuario_prontuario"+
+            "SELECT nome_usuario, (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) as qtd FROM Relacionamentos "+
+            "group by usuario_prontuario "+
             "order by (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) desc";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){
-                mapRelacionamentos.put(resultado.getInt("(select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos)"), resultado.getString("nome_usuario"));
+                mapRelacionamentos.put(resultado.getInt("qtd"), resultado.getString("nome_usuario"));
             }
             stmt.close();
         }catch (SQLException e) {

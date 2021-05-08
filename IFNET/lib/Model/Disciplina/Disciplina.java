@@ -2,11 +2,12 @@ package lib.Model.Disciplina;
 
 public class Disciplina {
     
-    private int codigoDisciplina, cargaHoraria;
+    private int codigoDisciplina;
+    private String cargaHoraria;
     private String nome;
 
 
-    public Disciplina(int cargaHoraria, String nome) {
+    public  Disciplina( String cargaHoraria, String nome) {
         this.cargaHoraria = cargaHoraria;
         this.nome = nome;
     
@@ -20,11 +21,11 @@ public class Disciplina {
         this.codigoDisciplina = codigoDisciplina;
     }
 
-    public int getCargaHoraria() {
+    public String getCargaHoraria() {
         return this.cargaHoraria;
     }
 
-    public void setCargaHoraria(int cargaHoraria) {
+    public void setCargaHoraria( String cargaHoraria) {
         this.cargaHoraria = cargaHoraria;
     }
 
