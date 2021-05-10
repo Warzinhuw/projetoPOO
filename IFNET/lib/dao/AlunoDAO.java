@@ -17,15 +17,14 @@ public class AlunoDAO{
     public static void inserir(Aluno aluno) {			
 		try {
 			// cria um preparedStatement
-			String sql = "insert into aluno(nome,email,categoria_confiabilidade, tipo_usuario, curso) values (?,?,?,?,?)";
+			String sql = "insert into aluno(nome,email, tipo_usuario, curso) values (?,?,?,?)";
             PreparedStatement stmt = null;
             try{
 			    stmt = conexao.getConn().prepareStatement(sql);
                 stmt.setString(1, aluno.getNome());
 			    stmt.setString(2, aluno.getEmail());
-			    stmt.setInt(3, aluno.getCategoriaConfiabilidade());
-                stmt.setInt(4, aluno.getTipoUsuario());
-				stmt.setString(5, aluno.getNomeCurso());
+                stmt.setInt(3, aluno.getTipoUsuario());
+				stmt.setString(4, aluno.getNomeCurso());
 			    stmt.execute();
 
 				sql = "select prontuario from aluno order by prontuario desc limit 1";
@@ -60,8 +59,7 @@ public class AlunoDAO{
 			if(resultado.next()){
 				aluno.cadastrarUsuario(
 					resultado.getString("nome"), 
-					resultado.getString("email"), 
-					resultado.getInt("categoria_confiabilidade")
+					resultado.getString("email")
 					);
 				aluno.setProntuario(prontuario);
 				valido = true;

@@ -25,7 +25,7 @@ import java.sql.DriverManager;
 
 public class App {
     private static Scanner leitura = new Scanner(System.in);
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         
         loadMenuIncial();
     }
@@ -89,7 +89,7 @@ public class App {
                     System.out.print("Digite o nome do Curso: ");
                     String nomeC = leitura.nextLine();
                     aluno.setNomeCurso(nomeC);
-                    aluno.cadastrarUsuario(nome, email, 0);
+                    aluno.cadastrarUsuario(nome, email);
                     AlunoDAO.inserir(aluno);
                     System.out.println("\nAluno(a) adicionado(a)!");
                     System.out.println("Prontuario: "+aluno.getProntuario());
@@ -98,8 +98,14 @@ public class App {
                 else{
                 System.out.print("Digite a area de estudo do professor: ");
                 String area = leitura.nextLine();
-                System.out.println("\nDisciplinas disponíveis: ");
                 ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
+                if(!listDisciplinas.isEmpty())
+                    System.out.println("\nDisciplinas disponíveis: ");
+                else{
+                    System.out.print("\nNenhuma disciplina disponível, adicione uma primeiro.");
+                    loadMenuCadastros();
+                    break;
+                }
                 for(int i = 0 ; i < listDisciplinas.size() ; i++){
                     System.out.print(listDisciplinas.get(i)+(i==listDisciplinas.size()-1 ? "." : ", "));
                 }
@@ -109,7 +115,7 @@ public class App {
                 professor = new Professor();
                 professor.setArea(area);
                 professor.setDisciplina(disciplina);
-                professor.cadastrarUsuario(nome, email, 0);
+                professor.cadastrarUsuario(nome, email);
                 try {
                         DisciplinaDAO.checarExistenciaDisciplina(disciplina);
                         ProfessorDAO.inserir(professor);
@@ -147,6 +153,7 @@ public class App {
 
             case "0":{
                 loadMenuIncial();
+                break;
             }
             default:{
                 System.out.println("Opção inválida!");
@@ -313,6 +320,10 @@ public class App {
                         for(int i = 0 ; i < listGrupos.size() ; i++){
                             System.out.print(listGrupos.get(i)+(i==listGrupos.size()-1 ? ".\n" : ", "));
                         }
+                        if(listGrupos.isEmpty()){
+                            System.out.println("Nenhum grupo disponível.");
+                            loadMenuProfessor(professor);
+                        }
                     }
                     else if(GrupoDAO.checarExistenciaGrupo(nomeGrupo))
                         controle = true;
@@ -331,6 +342,11 @@ public class App {
             case "0":{
                 loadMenuIncial();
                 break;
+            }
+
+            default:{
+                System.out.println("\nOpção inválida!");
+                loadMenuProfessor(professor);
             }
         }
 
@@ -361,7 +377,7 @@ public class App {
                         }
                     }
                     else if(!listAlunos.contains(nomeAluno)){
-                        System.out.println(nomeAluno+" já está nesse grupo!");
+                        System.out.println(nomeAluno+" já está nesse grupo ou não existe!");
                         loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
                     }
                     else
@@ -410,10 +426,10 @@ public class App {
                 if(leitura.nextLine().equalsIgnoreCase("s")){
                     GrupoDAO.excluirGrupo(grupo);
                     System.out.println("Grupo excluído com sucesso!");
-                    loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
+                    loadMenuProfessor(professor);
+                    break;
                 }
-                else
-                    System.out.println("Exclusão cancelada.");
+                System.out.println("Exclusão cancelada.");
                 loadMenuGrupo(nomeGrupo, nomeProfessor, professor);
                 break;
             }
@@ -521,10 +537,7 @@ public class App {
                 }catch(NaoEncontrado e){
                     System.out.println(e.getMessage());
                 }
-            }
-                
-         
-                System.out.println("Disciplina inválida!");
+            }  
         }while(nomeDisciplina.equals("0") || !controle);
         return nomeDisciplina;
     }
@@ -561,7 +574,7 @@ public class App {
                 String nome = leitura.nextLine();
             try{
                 UsuarioDAO.checarExistenciaUsuario(nome);
-                AlunoDAO.deletarAluno(nome);
+                ProfessorDAO.deletarProfessor(nome);
                 System.out.print("Professor removido com sucesso!");
             }catch(NaoEncontrado e){
                 System.out.println(e.getMessage());
@@ -604,6 +617,7 @@ public class App {
 
             case "0":{
                 loadMenuIncial();
+                break;
             }
 
             default: {

@@ -6,7 +6,7 @@ public abstract class Usuario {
     public static final int TIPO_PROFESSOR = 1;
 
     private String nome, email, prontuario;
-    private int categoriaConfiabilidade, tipoUsuario;
+    private int tipoUsuario;
 
 
     public Usuario() {
@@ -37,18 +37,9 @@ public abstract class Usuario {
         this.prontuario = prontuario;
     }
 
-    public int getCategoriaConfiabilidade() {
-        return this.categoriaConfiabilidade;
-    }
-
-    public void setCategoriaConfiabilidade(int categoriaConfiabilidade) {
-        this.categoriaConfiabilidade = categoriaConfiabilidade;
-    }
-
-    public void cadastrarUsuario(String nome, String email, int categoriaConfiabilidade){
+    public void cadastrarUsuario(String nome, String email){
         this.nome = nome;
         this.email = email;
-        this.categoriaConfiabilidade = categoriaConfiabilidade;
     }
 
     public void excluirUsuario(){

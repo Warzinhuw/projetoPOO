@@ -69,9 +69,9 @@ public class RelacionamentoDAO {
         ResultSet resultado = null;
         try{
             String sql = 
-            "SELECT nome_usuario, (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) as qtd FROM Relacionamentos "+
+            "SELECT nome_usuario, (count(nome_outro_usuario_aluno)+count(nome_outro_usuario_professor)) as qtd FROM Relacionamentos "+
             "group by usuario_prontuario "+
-            "order by (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) desc";
+            "order by qtd desc";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){

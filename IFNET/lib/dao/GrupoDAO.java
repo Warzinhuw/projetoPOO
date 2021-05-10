@@ -140,7 +140,9 @@ public class GrupoDAO {
         PreparedStatement stmt = null;
         ResultSet resultado = null;
         try{
-            String sql = "select nome_aluno from grupo_list_alunos where nome_grupo = '"+grupo.getNomeGrupo()+"' and nome_professor = '"+grupo.getNomeProfessor()+"'";
+            String sql = " SELECT Grupo_list_alunos.nome_aluno from Grupo_list_alunos INNER JOIN Grupo ON Grupo_list_alunos.id_grupo = Grupo.id_grupo "+
+            "where Grupo.nome_grupo = '"+grupo.getNomeGrupo()+
+            "' and Grupo.nome_professor = '"+grupo.getNomeProfessor()+"'";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){
@@ -158,7 +160,7 @@ public class GrupoDAO {
         PreparedStatement stmt = null;
         ResultSet resultado = null;
         try{
-            String sql = "select nome_grupo from Grupo where nome_disciplina = '"+disciplina+"'";
+            String sql = "select nome_grupo from Grupo where nome_disciplina = '"+disciplina+"' and tipo_grupo = '"+Grupo.GRUPO_PESQUISA+"'";
             stmt = conexao.getConn().prepareStatement(sql);
             resultado = stmt.executeQuery();
             while(resultado.next()){

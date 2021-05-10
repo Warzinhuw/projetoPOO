@@ -20,9 +20,9 @@ public class Aluno extends Usuario{
     }    
 
     @Override
-    public void cadastrarUsuario(String nome, String email, int categoriaConfiabilidade) {
+    public void cadastrarUsuario(String nome, String email) {
         // TODO vai salvar no banco
-        super.cadastrarUsuario(nome, email, categoriaConfiabilidade);
+        super.cadastrarUsuario(nome, email);
         this.setTipoUsuario(Usuario.TIPO_ALUNO);
     }
 
