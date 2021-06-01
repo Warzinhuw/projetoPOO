@@ -8,6 +8,7 @@ import java.util.SortedMap;
 
 import lib.Model.Disciplina.Disciplina;
 import lib.Model.Grupo.Grupo;
+import lib.Model.Grupo.GrupoAdapter;
 import lib.Model.Material.Material;
 import lib.Model.Usuario.Aluno;
 import lib.Model.Usuario.Professor;
@@ -303,6 +304,10 @@ public class App {
                 String nomeGrupo = leitura.nextLine();
                 String nomeDisciplina = escolherDisciplinaGrupo(professor);
                 Grupo grupo = new Grupo((tipoGrupo.equals("trabalho") ? Grupo.GRUPO_TRABALHO : Grupo.GRUPO_PESQUISA), nomeGrupo, professor.getNome(), nomeDisciplina);
+                //Adapter grupo
+                GrupoAdapter grupoAdapter = new GrupoAdapter((tipoGrupo.equals("trabalho") ? Grupo.GRUPO_TRABALHO : Grupo.GRUPO_PESQUISA), nomeGrupo, professor.getNome(), nomeDisciplina);
+                grupoAdapter.addIntegrante("rafael"); //add uma vez
+                grupoAdapter.addIntegrante("rafael"); //tenta add de novo e fala que já existe
                 GrupoDAO.inserir(grupo);
                 System.out.println("Grupo adicionado com sucesso!\nID do grupo: "+grupo.getIdGrupo());
                 loadMenuProfessor(professor);
