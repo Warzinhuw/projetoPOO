@@ -21,8 +21,6 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Professor` (
   `prontuario` int auto_increment unique,
   `Nome` VARCHAR(100) NULL,
   `email` VARCHAR(45) NULL,
-  `categoria_confiabilidade` INT NULL,
-  `relacionamento` VARCHAR(100) NULL,
   `area_estudo` VARCHAR(45) NULL,
   `disciplina` VARCHAR(45) NULL,
   `tipo_usuario` VARCHAR(45) NULL,
@@ -72,8 +70,8 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Disciplina` (
   CONSTRAINT `fk_Disciplina_Professor2`
     FOREIGN KEY (`Professor_prontuario`)
     REFERENCES `projetopoo`.`Professor` (`prontuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE cascade
+    ON UPDATE cascade)
 ENGINE = InnoDB;
 
 
@@ -86,8 +84,6 @@ CREATE TABLE IF NOT EXISTS `projetopoo`.`Aluno` (
   `prontuario` int auto_increment unique,
   `Nome` VARCHAR(100) NULL,
   `email` VARCHAR(45) NULL,
-  `categoria_confiabilidade` INT NULL,
-  `realacionamento` VARCHAR(100) NULL,
   `curso` VARCHAR(45) NULL,
   `tipo_usuario` VARCHAR(45) NULL
   )
@@ -148,18 +144,21 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 SELECT * FROM DISCIPLINA;
-SELECT * FROM DISCIPLINAS_ALUNO;
+SELECT * FROM DISCIPLINAS_ALUNO; #Lista de disciplinas em que um aluno se cadastrou
 SELECT * FROM ALUNO;
 SELECT * FROM PROFESSOR;
 SELECT * FROM Material;
 SELECT * FROM CONTEUDOS_DISCIPLINA;
-SELECT * FROM Grupo_list_alunos;
+SELECT * FROM Grupo_list_alunos; #Lista de alunos por grupo
 SELECT * FROM GRUPO;
+SELECT * FROM RELACIONAMENTOS;
 
-SELECT usuario_prontuario, (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) as qtd  FROM Relacionamentos
+#Usuário com mais relacionamentos
+SELECT usuario_prontuario, (count(nome_outro_usuario_aluno)+count(nome_outro_usuario_professor)) as qtd  FROM Relacionamentos
 group by usuario_prontuario
 order by (select count(nome_outro_usuario_aluno) from Relacionamentos )+(select count(nome_outro_usuario_professor) from Relacionamentos) desc;
 
+#Grupo com mais usuários
 select Grupo.nome_grupo, count(Grupo_list_alunos.id_grupo) as 'qtd' from Grupo_list_alunos
 INNER JOIN Grupo
 ON Grupo_list_alunos.id_grupo = Grupo.id_grupo

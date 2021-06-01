@@ -1,4 +1,4 @@
-package lib.dao;
+package lib.dao.RelacionamentoDAO;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import lib.Model.Usuario.Aluno;
 import lib.Model.Usuario.Usuario;
+import lib.dao.Conexao;
 
 public class RelacionamentoDAO {
 

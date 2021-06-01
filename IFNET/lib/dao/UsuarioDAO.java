@@ -3,6 +3,8 @@ package lib.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import lib.Excecao.NaoEncontrado;
 import lib.Model.Usuario.Aluno;
@@ -35,6 +37,44 @@ public class UsuarioDAO {
         }
         throw new NaoEncontrado();
     }
+
+    public static List<Usuario> checarExistenciaUsuario(String[] vetor) throws NaoEncontrado{
+        List<Usuario> user = new ArrayList<>();
+        int contador = 0;
+        for (String nome : vetor) {
+            try{
+                String sql = "select nome from Aluno where nome = '"+nome+"'";
+                PreparedStatement stmt = null;
+                ResultSet resultado = null;
+                stmt = conexao.getConn().prepareStatement(sql);
+                resultado = stmt.executeQuery();
+                if(resultado.next()){
+                    user.add(recuperarUsuario(resultado.getString("Nome")));
+                    contador++;
+                }
+                    else{
+                        sql = "select nome from Professor where nome = '"+nome+"'";
+                        stmt = conexao.getConn().prepareStatement(sql);
+                        resultado = stmt.executeQuery();
+                        if(resultado.next()){
+                            user.add(recuperarUsuario(resultado.getString("Nome")));
+                            contador++;
+                        }
+                    }
+                    for (Usuario usuario : user) {
+                        System.out.println(usuario.getNome());
+                    }
+                if(contador == vetor.length){
+                    return user;
+                }
+            }catch (SQLException e) {
+                e.printStackTrace();
+            }
+           
+        }
+        throw new NaoEncontrado();
+    }
+        
 
     public static Usuario recuperarUsuario(String nomeUsuario){
 		Aluno aluno = new Aluno();

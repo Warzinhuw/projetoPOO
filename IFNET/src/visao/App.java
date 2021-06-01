@@ -1,6 +1,7 @@
 package visao;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.SortedMap;
@@ -16,8 +17,9 @@ import lib.dao.DisciplinaDAO;
 import lib.dao.GrupoDAO;
 import lib.dao.MaterialDAO;
 import lib.dao.ProfessorDAO;
-import lib.dao.RelacionamentoDAO;
 import lib.dao.UsuarioDAO;
+import lib.dao.RelacionamentoDAO.RelacionamentoDAO;
+import lib.dao.RelacionamentoDAO.RelacionamentoV2;
 import lib.Excecao.*;
 
 import java.sql.*;  
@@ -26,7 +28,6 @@ import java.sql.DriverManager;
 public class App {
     private static Scanner leitura = new Scanner(System.in);
     public static void main(String[] args) {
-        
         loadMenuIncial();
     }
 
@@ -628,21 +629,37 @@ public class App {
     }
 
     public static void loadMenuRelacionamento(Usuario usuario){
+
         System.out.print("\nMenu - \n(a) Adicionar usuário \n(b) Excluir usuário \n(0) para voltar ao menu anterior\nR: ");
 
         switch(leitura.nextLine().toLowerCase()){
             case "a":{
-                System.out.print("\nDigite o nome do usuário que deseja adicionar: ");
+                System.out.print("\nDigite o nome do usuário caso seja somente um. Se for mais de um usuário, separe os nomes usando ',': ");
+                String[] vetor;
+                
+                
                 String nomeUsuario = leitura.nextLine();
-                Usuario outroUsuario;
-                try {
-                    outroUsuario = UsuarioDAO.checarExistenciaUsuario(nomeUsuario);
-                    System.out.print("Qual o grau de confiabilidade desse usuário?\nR: ");
-                    RelacionamentoDAO.criarRelacionamento(usuario, outroUsuario, leitura.nextLine());
-                    System.out.println("Relacionamento criado com sucesso!");
+                vetor = nomeUsuario.split(",");
+                if(vetor.length > 1){
+
+                    try{
+                        List<Usuario> listaUsuario = UsuarioDAO.checarExistenciaUsuario(vetor);
+                        System.out.println(listaUsuario);
+                        System.out.print("Qual o grau de confiabilidade desses usuários?\nR: ");
+                        RelacionamentoV2.criarRelacionamento(usuario, listaUsuario, leitura.nextLine());
+                        System.err.println("Relacionamentos criados com sucesso!");
+                    }catch(NaoEncontrado e){
+                        System.out.println(e);
+                    }  
+                }else{
                     
-                } catch (NaoEncontrado e) {
-                    System.out.println(e.getMessage());
+                    try {
+                        UsuarioDAO.checarExistenciaUsuario(nomeUsuario);
+                        System.out.println("Relacionamento criado com sucesso!");
+                        
+                    } catch (NaoEncontrado e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
 
                 loadMenuRelacionamento(usuario);

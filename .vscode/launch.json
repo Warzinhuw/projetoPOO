@@ -9,6 +9,13 @@
             "name": "Launch App",
             "request": "launch",
             "mainClass": "visao.App",
+            "projectName": "projetoPOO_74afa240"
+        },
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "visao.App",
             "projectName": "projetoPOO_14ccc645"
         },
         {
