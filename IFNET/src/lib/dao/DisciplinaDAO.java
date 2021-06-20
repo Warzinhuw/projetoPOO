@@ -5,10 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.print.DocFlavor.STRING;
-
-import com.mysql.cj.util.StringUtils;
-
 import lib.Excecao.FormatoInvalido;
 import lib.Excecao.NaoEncontrado;
 import lib.Model.Disciplina.Disciplina;
@@ -18,9 +14,13 @@ public class DisciplinaDAO {
 
     private static Conexao conexao = new Conexao();
 
-    public static void inserir(Disciplina disciplina) throws FormatoInvalido {	
-        if (!StringUtils.isStrictlyNumeric(disciplina.getCargaHoraria()))
+    public static void inserir(Disciplina disciplina) throws FormatoInvalido {
+
+        try{
+            int n = Integer.parseInt(disciplina.getCargaHoraria());
+        }catch (Exception e){
             throw new FormatoInvalido();
+        }
 
         try {
 			// cria um preparedStatement
