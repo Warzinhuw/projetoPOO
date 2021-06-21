@@ -58,7 +58,7 @@ public class App extends JFrame {
         JLabel labelNome = new JLabel("Nome do(a) " + (opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)") + ": ");
         JLabel labelEmail = new JLabel("Email do(a) " + (opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)") + ": ");
         JButton buttonSalvar = new JButton("Salvar");
-        labelTitulo.setBounds(150, 20, 100, 20);
+        labelTitulo.setBounds(200, 20, 100, 20);
         labelNome.setBounds(50, 100, 200, 20);
         labelEmail.setBounds(50, 140, 250, 20);
         buttonSalvar.setBounds(100, 180, 100, 20);
@@ -76,7 +76,7 @@ public class App extends JFrame {
         janela.add(jFormattedTextNome);
         janela.add(jFormattedTextEmail);
         janela.add(buttonSalvar);
-        setSize(600, 600);
+        setSize(500, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
 
@@ -89,7 +89,7 @@ public class App extends JFrame {
             labelCurso.setBounds(50, 180, 250, 20);
             JFormattedTextField jFormattedTextFieldCurso = new JFormattedTextField();
             jFormattedTextFieldCurso.setBounds(200, 180, 150, 20);
-            buttonSalvar.setBounds(100, 260, 150, 20);
+            buttonSalvar.setBounds(150, 260, 150, 20);
             janela.add(labelCurso);
             janela.add(jFormattedTextFieldCurso);
 
@@ -131,16 +131,70 @@ public class App extends JFrame {
             janela.add(labelAreaProfessor);
             janela.add(jFormattedTextFieldAreaProfessor);
             ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
+            JLabel labelDisciplinaProfessor = new JLabel("Disciplina ministrada: ");
+            labelDisciplinaProfessor.setBounds(50, 220, 250, 20);
+            JFormattedTextField jFormattedTextFieldDisciplinaProfessor = new JFormattedTextField();
+            jFormattedTextFieldDisciplinaProfessor.setBounds(220, 220, 150, 20);
+            janela.add(labelDisciplinaProfessor);
+            janela.add(jFormattedTextFieldDisciplinaProfessor);
             if (!listDisciplinas.isEmpty()) {
                 JLabel labelDisciplinas = new JLabel("Disciplinas disponíveis: ");
-                labelDisciplinas.setBounds(50, 220, 150, 20);
+                labelDisciplinas.setBounds(50, 260, 150, 20);
                 janela.add(labelDisciplinas);
                 JTextArea textAreaDisciplinas = new JTextArea();
-                //paramos aqui
-                textAreaDisciplinas.setText("okdsaodkasok");
-                textAreaDisciplinas.setBounds(220, 220, 150, 20);
-                janela.add(new JScrollPane(textAreaDisciplinas));
-                buttonSalvar.setBounds(50, 400, 150, 20);
+                for(String s : listDisciplinas){
+                    textAreaDisciplinas.setText(textAreaDisciplinas.getText()+s+(listDisciplinas.indexOf(s) != listDisciplinas.size()-1 ? "\n" : ""));
+                }
+                JScrollPane jScrollPane = new JScrollPane(textAreaDisciplinas);
+                jScrollPane.setBackground(Color.BLACK);
+                textAreaDisciplinas.setBounds(220, 260, 150, 100);
+                jScrollPane.setBounds(220, 260, 150, 100);
+                janela.add(jScrollPane);
+                buttonSalvar.setBounds(150, 400, 150, 20);
+                janela.setVisible(false);
+                janela.setVisible(true);
+                buttonSalvar.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Professor professor;
+                        professor = new Professor();
+                        professor.setArea(jFormattedTextFieldAreaProfessor.getText());
+                        professor.setDisciplina(jFormattedTextFieldDisciplinaProfessor.getText());
+                        professor.cadastrarUsuario(jFormattedTextNome.getText(), jFormattedTextEmail.getText());
+                        try {
+                            DisciplinaDAO.checarExistenciaDisciplina(jFormattedTextFieldDisciplinaProfessor.getText());
+                            ProfessorDAO.inserir(professor);
+                            if (DisciplinaDAO.adicionarDisciplinaProfessor(professor, jFormattedTextFieldDisciplinaProfessor.getText())) {
+                                System.out.println("\nProfessor(a) adicionado(a)!");
+                                System.out.println("\nProntuario: " + professor.getProntuario());
+                                janela.removeAll();
+                                JLabel labelErro = new JLabel("Professor(a) adicionado(a)!");
+                                setSize(600,200);
+                                labelErro.setBounds(30, 50, 500, 50);
+                                labelErro.setFont(labelErro.getFont().deriveFont(17f));
+                                janela.add(labelErro);
+                                setVisible(false);
+                                setVisible(true);
+                                new java.util.Timer().schedule(
+                                        new java.util.TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                janela.removeAll();
+                                                setVisible(false);
+                                                loadMenuProfessor(professor);
+                                            }
+                                        },
+                                        3000
+                                );
+                            } else {
+                                System.out.println("\nDisciplina já cadastrada anteriormente!");
+                                loadMenuCadastros();
+                            }
+                        } catch (NaoEncontrado erro) {
+                            System.out.println(erro.getMessage());
+                        }
+                    }
+                });
             }
             else {
                 janela.removeAll();
@@ -177,8 +231,7 @@ public class App extends JFrame {
 
         switch (opcaoMenu.toLowerCase()) {
             case "a": {
-                new App().testaJFormattedTextField("b");
-                //loadMenuCadastros();
+                loadMenuCadastros();
                 break;
             }
 
@@ -213,55 +266,8 @@ public class App extends JFrame {
         String opcaoMenu = leitura.nextLine();
 
         switch (opcaoMenu.toLowerCase()) {
-
-            case "a":
-            case "b": {
-                String nome, email;
-                System.out.print("Digite o nome do(a) " + (opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)") + ": ");
-                nome = leitura.nextLine();
-                System.out.print("Digite o email do(a) " + (opcaoMenu.equalsIgnoreCase("a") ? "aluno(a)" : "professor(a)") + ": ");
-                email = leitura.nextLine();
-
-                if (opcaoMenu.equalsIgnoreCase("b")) {
-
-                    System.out.print("Digite a area de estudo do professor: ");
-                    String area = leitura.nextLine();
-                    ArrayList<String> listDisciplinas = DisciplinaDAO.getListDisciplinasSemProf();
-                    if (!listDisciplinas.isEmpty())
-                        System.out.println("\nDisciplinas disponíveis: ");
-                    else {
-                        System.out.print("\nNenhuma disciplina disponível, adicione uma primeiro.");
-                        loadMenuCadastros();
-                        break;
-                    }
-                    for (int i = 0; i < listDisciplinas.size(); i++) {
-                        System.out.print(listDisciplinas.get(i) + (i == listDisciplinas.size() - 1 ? "." : ", "));
-                    }
-                    System.out.print("\nQual disciplina esse professor irá ministrar?\nR: ");
-                    String disciplina = leitura.nextLine();
-                    Professor professor;
-                    professor = new Professor();
-                    professor.setArea(area);
-                    professor.setDisciplina(disciplina);
-                    professor.cadastrarUsuario(nome, email);
-                    try {
-                        DisciplinaDAO.checarExistenciaDisciplina(disciplina);
-                        ProfessorDAO.inserir(professor);
-                        if (DisciplinaDAO.adicionarDisciplinaProfessor(professor, disciplina)) {
-                            System.out.println("\nProfessor(a) adicionado(a)!");
-                            System.out.println("\nProntuario: " + professor.getProntuario());
-                            loadMenuProfessor(professor);
-                        } else
-                            System.out.println("\nDisciplina já cadastrada anteriormente!");
-                        loadMenuCadastros();
-                    } catch (NaoEncontrado e) {
-                        System.out.println(e.getMessage());
-                    }
-                    break;
-                }
-            }
-
-            case "c": {
+            case "a", "b" -> new App().testaJFormattedTextField(opcaoMenu);
+            case "c" -> {
                 String nomeDisciplina;
                 String cargaHoraria;
                 System.out.print("Nome da disciplina: ");
@@ -276,17 +282,13 @@ public class App extends JFrame {
                     System.out.println(f.getMessage());
                 }
                 loadMenuCadastros();
-                break;
             }
-
-            case "0": {
+            case "0" -> {
                 loadMenuIncial();
-                break;
             }
-            default: {
+            default -> {
                 System.out.println("Opção inválida!");
                 loadMenuCadastros();
-                break;
             }
         }
     }
@@ -432,7 +434,7 @@ public class App extends JFrame {
                 GrupoAdapter grupoAdapter = new GrupoAdapter((tipoGrupo.equals("trabalho") ? Grupo.GRUPO_TRABALHO : Grupo.GRUPO_PESQUISA), nomeGrupo, professor.getNome(), nomeDisciplina);
                 grupoAdapter.addIntegrante("rafael"); //add uma vez
                 grupoAdapter.addIntegrante("rafael"); //tenta add de novo e fala que já existe
-                GrupoDAO.inserir(grupo);
+                GrupoDAO.inserir(grupoAdapter);
                 System.out.println("Grupo adicionado com sucesso!\nID do grupo: " + grupo.getIdGrupo());
                 loadMenuProfessor(professor);
                 break;
